@@ -23,8 +23,7 @@ void Pinsetter::turretHomed(){
 
 void Pinsetter::pinSense(){          
      _turret.pinSense();
-     //_mainMotor.resetTimeout(); this function may not be needed!!!
-     _mainMotor.start();
+     _mainMotor.resetTimeout();
 }
 
 void Pinsetter::heartbeat(){
