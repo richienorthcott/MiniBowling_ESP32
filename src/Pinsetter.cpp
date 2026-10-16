@@ -34,7 +34,7 @@ void Pinsetter::heartbeat(){
           
           case PinsetterPose::INIT:
                //wait for turret homing sequence to complete
-               if(_turret.currentPose == Turret::TurretPose::RECEIVEPINS) currentPose = PinsetterPose::SWEEPGUARDTOBACK;
+               if(_turret.currentPose == Turret::TurretPose::RECEIVEPINS) currentPose = PinsetterPose::THROWTWO;
                break;          
           
           case PinsetterPose::STARTMENU:
@@ -69,13 +69,16 @@ void Pinsetter::heartbeat(){
                if(!_sweep.isAnimating){
                     switch(currentMode){
                          case PinsetterMode::INITIALISING1:
-                              currentMode = PinsetterMode::INITIALISING2;
-                              currentPose = PinsetterPose::THROWTWO;
-                              break;
                          case PinsetterMode::THROW_TWO:
                               _throwLEDs.clear();
                               currentPose = PinsetterPose::WAITFORPINS;       
                               break;
+                         case PinsetterMode::INITIALISING2:
+                              _turret.moveToSlot(9);
+                              delaySteps = 0;
+                              currentPose = PinsetterPose::CLEARTURRET;
+                              break;
+
                          case PinsetterMode::THROW_ONE:
                               currentPose = PinsetterPose::PINSREPLACING;
                               _deck.setPosition(Deck::DeckPose::GRAB);
@@ -119,23 +122,16 @@ void Pinsetter::heartbeat(){
                     _mainMotor.paused = false;
                     switch(currentMode){
                          case PinsetterMode::INITIALISING1:
-                              currentPose = PinsetterPose::THROWTWO;
                               currentMode = PinsetterMode::INITIALISING2;
+                              currentPose = PinsetterPose::SWEEPGUARDTOBACK;
                               break;
-                         
                          case PinsetterMode::INITIALISING2:
-                              _turret.moveToSlot(9);
-                              delaySteps = 0;
-                              currentPose = PinsetterPose::CLEARTURRET;
-                              currentMode = PinsetterMode::INITIALISING3;
-                              break;
-                         
-                         case PinsetterMode::INITIALISING3:
+                              //initialisation is now complete
+                              _throwLEDs.throwOne();
                               _mainMotor.start();
                               _deckLighting.turnOn();
-                              currentPose = PinsetterPose::STARTMENU;
-                              _throwLEDs.throwOne();
-                         
+                              currentMode = PinsetterMode::THROW_ONE;
+                              currentPose = PinsetterPose::SWEEPUP;
                               break;
                          case PinsetterMode::THROW_ONE:
                               currentMode = THROW_TWO;
