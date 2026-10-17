@@ -6,19 +6,21 @@
 
 class Deck{
     public:
+        Deck(Adafruit_PWMServoDriver* servos);                
+        
         enum DeckPose{
             UP,
             DOWN,            
             GRAB,
             SWEEP
         };
-        Deck(Adafruit_PWMServoDriver* servos);                
-        void begin();
-        void setPosition(enum DeckPose pos);        
         DeckPose currentPose = DeckPose::UP;
-        Scissors scissors;
-        Slide slide;
-    private:
-        Adafruit_PWMServoDriver* _servoInterface;
+
+        void begin();                           
+        void setPosition(enum DeckPose pos);    //sets deck position to the specified DeckPose ENUM    
         
+        Scissors scissors;                      //this is a public object, so can be accessed from the pinsetter's code
+        Slide slide;                            //this is a public object, so can be accessed from the pinsetter's code
+    private:
+        Adafruit_PWMServoDriver* _servoInterface;      
 };
