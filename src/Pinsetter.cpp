@@ -29,11 +29,10 @@ void Pinsetter::pinSense(){
 void Pinsetter::heartbeat(){
      /*This is the main part of the pinsetter code
      
-     On power on (or calling begin() function again), the pinsetter enters an initialisation routine. The status in maintained in the PinsetterMode ENUM, normal operaiton is:
+     On power on (or calling begin() function again), the pinsetter enters an initialisation routine. The status in maintained in the PinsetterMode ENUM, normal operation is:
      INITIALISING1 -> INITIALISING2 -> THROW_ONE -> THROW_TWO-> THROW_ONE -> THROW_TWO-> THROW_ONE -> THROW_TWO etc
      
      The intialisation routine does the following, which ensures the machine is in a 'known' state and also prevents collisions.
-     The motor is stopped to prevevnt new pins being added to turret.
 
      1. moves sweep to GUARD position
      2. homes the turret stepper motor
@@ -48,6 +47,7 @@ void Pinsetter::heartbeat(){
      11. starts the motor and enters the THROW_ONE state
      
      Then the machine follows normal play sequencing.
+     
      Delays are either frames based (at about 30Hz, using the delaySteps increment, or are based on the sweep moving since it uses a tweening approach therefors we know
      when the motion is 'complete'.
      */
