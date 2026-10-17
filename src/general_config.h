@@ -1,7 +1,5 @@
 #pragma once
 
-#define VERSION 1.1
-
 //#define DEBUG
 
 #ifdef DEBUG
@@ -30,11 +28,11 @@
 #define SLIDE_DUMP        185  
 #define SCISSORS_OPEN     255
 #define SCISSORS_CLOSE    350
-#define SWEEP_LEFT_PULSEWIDTH_UP      315//312//309
-#define SWEEP_LEFT_PULSEWIDTH_GUARD   258//254 
+#define SWEEP_LEFT_PULSEWIDTH_UP      315
+#define SWEEP_LEFT_PULSEWIDTH_GUARD   258 
 #define SWEEP_LEFT_PULSEWIDTH_BACK    188
-#define SWEEP_RIGHT_PULSEWIDTH_UP     171//174
-#define SWEEP_RIGHT_PULSEWIDTH_GUARD  231//234 
+#define SWEEP_RIGHT_PULSEWIDTH_UP     171
+#define SWEEP_RIGHT_PULSEWIDTH_GUARD  231 
 #define SWEEP_RIGHT_PULSEWIDTH_BACK   307
 #define DECK_LEFT_PULSEWIDTH_UP 452
 #define DECK_LEFT_PULSEWIDTH_SWEEP 357
@@ -49,11 +47,10 @@
 #define BALL_DOOR_DELAY_PULSES        200 //delay from ball trigger to door opening
 #define BALL_DOOR_CLOSE_PULSES        360 //delay from ball trigger to door closing
 
-
 #define HOME_DEBOUNCE_MILLIS 1000
 
 #define TURRET_STEPS_PER_REV 1600
-#define TURRET_HOME_OFFSET 80//73
+#define TURRET_HOME_OFFSET 80
 #define TURRET_POSITION1  133 
 #define TURRET_POSITION2  267
 #define TURRET_POSITION3  533
@@ -69,7 +66,7 @@
 #define TURRET_ACCEL  80
 
 #define TURRET_MOVE_OFF_SENSOR  100
-#define TURRET_ADVANCE_DELAY_MS 800//900
+#define TURRET_ADVANCE_DELAY_MS 800  //milliseconds
 #define TURRET_PAUSE_SLOT  8 //turret will pause conveyor on this slot if the deck has pins in, to prevent jams 
 
 #define LANE_PIXEL_COUNT        86
@@ -83,7 +80,7 @@
 #define SENSOR_DEBOUNCE_MS 600 //milliseconds
 
 #define CONVEYOR_TIMEOUT_MS 30000 //milliseconds
-#define MAX_BALL_SPEED 800//ignore any speed sensings bigger than this
+#define MAX_BALL_SPEED 800     //ignore any speed sensings bigger than this
 
 //pinsetter motion timings (in 'frames')
 #define TWEEN_FRAMES 20
