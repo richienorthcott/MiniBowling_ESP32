@@ -27,7 +27,7 @@ Each Pinsetter component has its own ENUM values which tracks its current state,
 
 `turretHomed()` notification from homing sensor interrupt handled in main loop, used on initialisation sequence
 
-`pinSense()` notitifcication from pin IR sensor interrupt handled in main loop
+`pinSense()` notification from pin IR sensor interrupt handled in main loop
 
 `doCycle(true/false)` cycle the pinsetter. **true** adds a delay before the sweep lowers
 
