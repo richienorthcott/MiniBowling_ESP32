@@ -13,6 +13,7 @@ void Pinsetter::begin(){
      _throwLEDs.begin();
      _deckLighting.begin();
      _turret.begin();
+
      currentPose = PinsetterPose::INIT;
      currentMode = PinsetterMode::INITIALISING1;
 }
@@ -69,6 +70,7 @@ void Pinsetter::heartbeat(){
                //after a delay (allows time for full rotation to slot 10, dropping the pins), return the turret to slot 0
                delaySteps +=1;
                if(delaySteps == TURRET_FULL_ROTATE){                    
+                    delaySteps = 0;
                     _turret.moveToSlot(0);
                     _turret.deckHasPins = true;
                     currentPose = PinsetterPose::WAITFORPINS;                                        
@@ -94,6 +96,7 @@ void Pinsetter::heartbeat(){
           case PinsetterPose::SWEEPCOMPLETE:
                //sweep cycle is complete, decide what to do next.
                if(!_sweep.isAnimating){
+                    delaySteps = 0;
                     switch(currentMode){
                          case PinsetterMode::INITIALISING1:
                          case PinsetterMode::THROW_TWO:
@@ -102,14 +105,11 @@ void Pinsetter::heartbeat(){
                               break;
                          case PinsetterMode::INITIALISING2:
                               _turret.moveToSlot(9);
-                              delaySteps = 0;
                               currentPose = PinsetterPose::CLEARTURRET;
                               break;
-
                          case PinsetterMode::THROW_ONE:
                               currentPose = PinsetterPose::PINSREPLACING;
                               _deck.setPosition(Deck::DeckPose::GRAB);
-                              delaySteps = 0;
                               break;
                     }         
                }
@@ -149,6 +149,7 @@ void Pinsetter::heartbeat(){
                //move the slide to the RECEIVE position, decide what to do next
                delaySteps += 1;
                if(delaySteps == DECK_MID_RISE){
+                    delaySteps = 0;
                     _deck.slide.setPosition(Slide::SlidePose::RECEIVE);
                     _mainMotor.paused = false;
                     switch(currentMode){
@@ -218,9 +219,9 @@ void Pinsetter::heartbeat(){
           case PinsetterPose::SWEEPUPTOGUARD:
                //lower the deck to the GRAB position
                if(!_sweep.isAnimating){
-                    _deck.setPosition(Deck::DeckPose::GRAB);
-                    delaySteps = 0;
-                    currentPose = PinsetterPose::CLOSESCISSORS;
+                   _deck.setPosition(Deck::DeckPose::GRAB);
+                   currentPose = PinsetterPose::CLOSESCISSORS;
+                   delaySteps = 0;
                }
                break;
           
@@ -292,10 +293,10 @@ void Pinsetter::heartbeat(){
                
      }
 
-     //if the turret is nearly full....
+     //if the turret is nearly full and the motor is running...
      if(_turret.currentSlot >= TURRET_PAUSE_SLOT){                         
           if(_mainMotor.currentPose == MainMotor::MainMotor::RUNNING){                         
-               //this section handles two cases where the motor needs to be paused.
+               //this super-important section handles two cases where the motor needs to be paused.
                if(_turret.deckHasPins || _deck.currentPose!=Deck::DeckPose::UP){                                                  
                     _mainMotor.paused = true;
                     _mainMotor.stop();
@@ -316,24 +317,29 @@ void Pinsetter::heartbeat(){
 
 bool Pinsetter::doCycle(bool pause){
      if(currentPose == PinsetterPose::READY){  
+          delaySteps = 0; 
           _ballReturn.armDoor();
+          
+          //start the main motor, but not if in the 'paused' state otherwise bad things happen!
           if(!_mainMotor.paused) _mainMotor.start();
+          
           if(pause == true){
-               delaySteps = 0; 
                currentPose = PinsetterPose::DELAYCYCLE;
           }else{
                currentPose = PinsetterPose::CYCLE;
           }
           return true;          
      }
-     return false; //current pinsetter state is not READY
+     return false; //current pinsetter state is not READY, don't do anything!
 }
 
 void Pinsetter::startMotor(){
+     //relays motor start request to the motor child object
      _mainMotor.start();
 }
 
 Pinsetter::pinsetterStatus Pinsetter::getStatus(){
+     //set up a new struct to contain the returned properties
      Pinsetter::pinsetterStatus ret;
      
      ret.deckLoaded = false;
