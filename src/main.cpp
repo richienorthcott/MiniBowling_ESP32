@@ -14,8 +14,6 @@
 #include <PCF8575.h>
 #include <PinSensor.h>
 
-hw_timer_t *heartbeat = NULL;
-
 PCF8575 pinSensors(PCF8575_ADDRESS);
 Adafruit_PWMServoDriver servos(PCA9685_ADDRESS);
 MoToStepper turretStepper(TURRET_STEPS_PER_REV, STEPDIR);
@@ -40,11 +38,12 @@ bool deckIsLoaded = false;
 bool motorRunning = false;
 ControlPanel::ControlPanelPage currentPage = ControlPanel::ControlPanelPage::INIT;
 
-void ARDUINO_ISR_ATTR onTimer() {
-    flag_updateHeartbeat = true;
+ISR(TIMER1_COMPA_vect){
+    OCR1A += 8333; // Advance The COMPA Register
+    flag_updateHeartbeat = true;  
 }
 
-void ARDUINO_ISR_ATTR onResetButton(){
+void onResetButton(){
     if(millis() - lastReset > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_RESET)){
             lastReset = millis();
@@ -63,7 +62,7 @@ void ARDUINO_ISR_ATTR onResetButton(){
     }
 }
 
-void ARDUINO_ISR_ATTR onHomeButton(){
+void  onHomeButton(){
     //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastHome > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_HOME)){
@@ -73,7 +72,7 @@ void ARDUINO_ISR_ATTR onHomeButton(){
     }
 }
 
-void ARDUINO_ISR_ATTR onSelect1(){
+void  onSelect1(){
     //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastSelect1 > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_SELECT1)){
@@ -83,7 +82,7 @@ void ARDUINO_ISR_ATTR onSelect1(){
     }
 }
 
-void ARDUINO_ISR_ATTR onSelect2(){
+void  onSelect2(){
     //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastSelect2 > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_SELECT2)){
@@ -93,7 +92,7 @@ void ARDUINO_ISR_ATTR onSelect2(){
     }
 }
  
-void ARDUINO_ISR_ATTR onSelect3(){
+void  onSelect3(){
     //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastSelect3 > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_SELECT3)){
@@ -103,7 +102,7 @@ void ARDUINO_ISR_ATTR onSelect3(){
     }
 }
 
-void ARDUINO_ISR_ATTR onBallSense(){
+void  onBallSense(){
     if(millis() - lastBallSense > SENSOR_DEBOUNCE_MS){
             lastBallSense = millis();
             flag_ballSense = true;
@@ -111,14 +110,14 @@ void ARDUINO_ISR_ATTR onBallSense(){
     }
 }
 
-void ARDUINO_ISR_ATTR onBallSpeed(){
+void  onBallSpeed(){
     if(millis() - lastBallSpeed > SENSOR_DEBOUNCE_MS){
             lastBallSpeed = millis();
             flag_ballSpeed = true;
     }
 }
 
-void ARDUINO_ISR_ATTR onTurretHome(){
+void  onTurretHome(){
     if(millis() - lastHomeSense > DEBOUNCE_MS){
          if(!digitalRead(TURRET_HOME_PIN)){
                 lastHomeSense = millis();
@@ -127,7 +126,7 @@ void ARDUINO_ISR_ATTR onTurretHome(){
     }
 }
 
-void ARDUINO_ISR_ATTR onPinSense(){
+void  onPinSense(){
     if(millis() - lastPinSense > SENSOR_DEBOUNCE_MS){
         lastPinSense = millis();
         flag_pinSense = true;
@@ -135,10 +134,11 @@ void ARDUINO_ISR_ATTR onPinSense(){
 }
 
 void setupTimer(){
-    heartbeat = timerBegin(0, 80, true);// The timer will count in microseconds
-    timerAttachInterrupt(heartbeat, &onTimer, true);
-    timerAlarmWrite(heartbeat, 33333, true); //30Hz
-    timerAlarmEnable(heartbeat);   
+    TCCR1A = 0;           // Init Timer1A
+    TCCR1B = 0;           // Init Timer1B
+    TCCR1B |= B00000011;  // Prescaler = 64
+    OCR1A = 8333;        // Timer Compare1A Register
+    TIMSK1 |= B00000010;  // Enable Timer COMPA Interrupt
 }
 
 void setupInterrupts(){
