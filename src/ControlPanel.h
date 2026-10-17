@@ -28,18 +28,19 @@ class ControlPanel{
 
         ControlPanelPage currentPose = ControlPanelPage::INIT;
         void begin();
-        void notConnected();
-        
-        bool showMessage(ControlPanel::ControlPanelMessage msg);
-        bool showSpeed(float speed);
-        bool showPinsetterStatus(Pinsetter::PinsetterPose status);//prints the number of the active pinsetter state enum
-        bool showSlot(uint8_t turretSlot);
-        bool showDeck(bool loaded);
-        bool showMotor(bool motor);
+
+        bool showMessage(ControlPanel::ControlPanelMessage msg);      //prints a preset message according to the passed ENUM. Returns false if not in MAIN mode
+        bool showSpeed(float speed);                                  //prints the last ball throw speed. Returns false if not in MAIN mode
+        bool showPinsetterStatus(Pinsetter::PinsetterPose status);    //prints the number of the active pinsetter state enum. Returns false if not in MAIN mode
+        bool showSlot(uint8_t turretSlot);                            //prints the number of the active turret load slot. Returns false if not in MAIN mode
+        bool showDeck(bool loaded);                                   //prints whether the deck is full or empty. Returns false if not in MAIN mode
+        bool showMotor(bool motor);                                   //prints the state of the main motor. Returns false if not in MAIN mode
 
         void submitPins(PinSensor::pinStatus pinsAndScore);
         void clearPins();
-        
+
+        //these are all different overall menu 'modes'
+        void notConnected();
         void mainMenu();//root level
         void utilMenu();//level 1
         void lightMenu();//level 2
@@ -50,7 +51,7 @@ class ControlPanel{
         HT16K33* _ledMatrix;
         Pindicator _pindicator;
 
-        //these four variables persist the menu status if changing page
+        //these variables persist the menu status if changing page
         float lastSpeed = 0;
         uint8_t lastLoad = 0;
         ControlPanelMessage lastMessage = ControlPanelMessage::WAIT;
