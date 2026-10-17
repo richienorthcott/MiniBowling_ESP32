@@ -315,8 +315,7 @@ void Pinsetter::heartbeat(){
 }
 
 bool Pinsetter::doCycle(bool pause){
-     if(currentPose == PinsetterPose::READY){
-          DEBUG_LOG("ball", "break");        
+     if(currentPose == PinsetterPose::READY){  
           _ballReturn.armDoor();
           if(!_mainMotor.paused) _mainMotor.start();
           if(pause == true){
