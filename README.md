@@ -100,13 +100,13 @@ All pinsetter functions are from the PWM outputs (up to 16 available on the PCA9
 
 **PIN 14** Maintenance LED OUT
 
-**Pin 16** Serial RX (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
+**Pin 16** Serial RX. Not in use (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
 
-**Pin 17** Serial TX (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
+**Pin 17** Serial TX. Not in use (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
 
-**PIN 18** STEP OUT to stepper driver
+**PIN 18** STEP OUT to any suitable stepper driver. I'm using a TMC2009 with the smaller NEMA17 motor.
 
-**PIN 19** DIR OUT to stepper driver
+**PIN 19** DIR OUT to any suitable stepper driver. I'm using a TMC2009 with the smaller NEMA17 motor.
 
 **PIN 21** I2C SDA (data)
 
