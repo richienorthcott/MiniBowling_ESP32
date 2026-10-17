@@ -12,11 +12,14 @@ class BallReturn{
         };        
         
         BallReturnPose currentPose = CLOSED;
+        
         void begin();
-        void openDoor();
-        void closeDoor();
-        void armDoor(); //schedules an open/close function from ball detection
         void heartbeat();
+
+        void openDoor();        //open the door immediately
+        void closeDoor();       //close the door immediately
+        void armDoor();         //schedules an open/close, controlled by timeouts.
+
     private:
         Adafruit_PWMServoDriver* _servoInterface;
         int pulseCount = 0;
