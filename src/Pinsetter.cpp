@@ -48,7 +48,7 @@ void Pinsetter::heartbeat(){
      
      Then the machine follows normal play sequencing.
      
-     Delays are either frames based (at about 30Hz, using the delaySteps increment, or are based on the sweep moving since it uses a tweening approach therefors we know
+     Delays are either frames based (at about 30Hz), using the delaySteps increment, or are based on the sweep moving since it uses a tweening approach therefore we know
      when the motion is 'complete'.
      */
      
