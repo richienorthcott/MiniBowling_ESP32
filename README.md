@@ -41,7 +41,7 @@ The main section of the code `main.cpp` handles all the sensor, control panel bu
 
 - **WS2811 Addressable lane LED lights** -  I'm handling this as two strips wired in parallel, so show the same.
 - **I2C 20x4 LCD display**
-- **I2C LED matrix display** - for 10 LED 'pindicator' (HT16k33 IC module). Note there's potentially a conflict with the default address since its default (usually 0x70) is the same as the PCA9685's 'All Call' address, which can't be changed. I changed my HT16K33 address to 0x71.
+- **I2C LED matrix display driver** - for 10 LED 'pindicator' (HT16k33 IC module). Note there's potentially a conflict with the default address since its default (usually 0x70) is the same as the PCA9685's 'All Call' address, which can't be changed. I changed my HT16K33 address to 0x71.
 - **I2C IO port expander** - for pin sensors (PCF8575 IC module)
 
 The periodic 30Hz **heartbeat** notification is also sent to the LaneLighting instance, so can be used to drive LED animation effects.
