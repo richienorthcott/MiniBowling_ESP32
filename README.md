@@ -37,16 +37,16 @@ Each Pinsetter component has its own ENUM values which tracks its current state,
 
 ## Other Components
 
-The main section of the code `main.cpp` handles all the sensor, control panel button and timer interrupts, and acts as a gateway between the pinsetter, and other components, all of which are *optional*, and are handled in their own classes/objects.
+The main section of the code `main.cpp` handles all the sensor, control panel button and timer interrupts, and acts as a gateway between the pinsetter, and other components, all of which are *optional*, and are handled in their own classes/objects. I2C addresses are configurable in `general_config.h`
 
-- WS2811 Addressable LED lighting
+- WS2811 Addressable lane LED lights. I'm handling this as two strips wired in parallel, so show the same.
 - I2C 20x4 LCD display
-- I2C LED matrix display for 10 LED 'pindicator' (HT16k33)
-- I2C IO port expander for pin sensors (PCF8575)
+- I2C LED matrix display for 10 LED 'pindicator' (HT16k33 IC module). Note there's potentially a conflict with the default address since its default (usually 0x70) is the same as the PCA9685's 'All Call' address, which can't be changed. I changed my HT16K33 address to 0x71.
+- I2C IO port expander for pin sensors (PCF8575 IC modul)
 
-The 30Hz **heartbeat** notification is also sent to the LaneLighting instance, so can be used to drive LED animation effects.
+The periodic 30Hz **heartbeat** notification is also sent to the LaneLighting instance, so can be used to drive LED animation effects.
 
-Without the fancy control panel, useful functions to attach to four physical pushbuttons are:
+Without the fancy control panel, useful functions to attach to physical pushbuttons are:
 
 `pinsetter.doCycle(false)` equivalent to a ball throw, but no delay
 
@@ -54,11 +54,11 @@ Without the fancy control panel, useful functions to attach to four physical pus
 
 `pinsetter.startMotor()` restarts the motor, if stopped
 
-The **reset** button doesn't need any complicated coding, setting the EN pin to HIGH will disable the stepper driver and the PWM driver. It's programmed as a toggle so each subsequent press enters/leaves the reset mode.
+The **reset** button doesn't need any complicated coding, its interrupt sets the EN pin HIGH, which disables the stepper driver and the PWM driver (these are both active LOW). It's programmed as a toggle so each subsequent press enters/leaves the reset mode.
 
 ## External Hardware
 
-As a minimum you'll need the PCA9685 PWM IC for the servos (there aren't enough pins on an ESP32 to support everything). The default I2C address assumed in the code is 0x40, this can be changed in **general_config.h**. PWM outputs can be connected directly to servos via 220 ohm resistors, other outputs will need interfacing via MOSFETs, optocouplers or similar. Here's the mappings I've used, they can be changed in **pinconfig.h.**
+As a minimum with the ESP32 you'll need the PCA9685 PWM IC or module for the servos (there aren't enough pins on an ESP32 to support everything). The default I2C address assumed in the code is 0x40, this can be changed in **general_config.h**. PWM outputs can be connected directly to servos via 220 ohm resistors, other outputs will need interfacing via MOSFETs, optocouplers or similar. Here's the mappings I've used, they can be changed in **pinconfig.h.**
 
 ## Default PCA9685 PWM output mappings
 
