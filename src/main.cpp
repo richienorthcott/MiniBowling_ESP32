@@ -51,16 +51,6 @@ void ARDUINO_ISR_ATTR onResetButton(){
     }
 }
 
-void ARDUINO_ISR_ATTR onHomeButton(){
-    //all the control panel buttons suffered cross-talk, checking pin status resolves this 
-    if(millis() - lastHome > DEBOUNCE_MS){
-        if(!digitalRead(BUTTON_HOME)){
-            lastHome = millis();
-            flag_btn_home = true;
-        }
-    }
-}
-
 void ARDUINO_ISR_ATTR onSelect1(){
     //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastSelect1 > DEBOUNCE_MS){
@@ -99,13 +89,6 @@ void ARDUINO_ISR_ATTR onBallSense(){
     }
 }
 
-void ARDUINO_ISR_ATTR onBallSpeed(){
-    if(millis() - lastBallSpeed > SENSOR_DEBOUNCE_MS){
-            lastBallSpeed = millis();
-            flag_ballSpeed = true;
-    }
-}
-
 void ARDUINO_ISR_ATTR onTurretHome(){
     if(millis() - lastHomeSense > DEBOUNCE_MS){
          if(!digitalRead(TURRET_HOME_PIN)){
@@ -131,12 +114,10 @@ void setupTimer(){
 
 void setupInterrupts(){
     attachInterrupt(BUTTON_RESET, onResetButton, FALLING);
-    attachInterrupt(BUTTON_HOME, onHomeButton, FALLING);
     attachInterrupt(BUTTON_SELECT1, onSelect1, FALLING);
     attachInterrupt(BUTTON_SELECT2, onSelect2, FALLING);
     attachInterrupt(BUTTON_SELECT3, onSelect3, FALLING);
     attachInterrupt(BALL_SENSOR_PIN, onBallSense, FALLING);
-    attachInterrupt(BALL_SPEED_PIN, onBallSpeed, FALLING);
     attachInterrupt(IR_SENSOR_PIN, onPinSense, FALLING);
     attachInterrupt(TURRET_HOME_PIN, onTurretHome, FALLING);
 }
@@ -152,17 +133,13 @@ void setupPins(){
     pinMode(DIR_PIN, OUTPUT);
 
     pinMode(BUTTON_RESET, INPUT);
-    pinMode(BUTTON_HOME, INPUT);
     pinMode(BUTTON_SELECT1, INPUT);     
     pinMode(BUTTON_SELECT2, INPUT);
     pinMode(BUTTON_SELECT3, INPUT);
     pinMode(BALL_SENSOR_PIN, INPUT);
     pinMode(BALL_SPEED_PIN, INPUT);
     pinMode(IR_SENSOR_PIN, INPUT);
-    pinMode(TURRET_HOME_PIN, INPUT);
-    
-    
-    
+    pinMode(TURRET_HOME_PIN, INPUT);    
 }
 
 void resetPinsetter(){
