@@ -94,38 +94,38 @@ All pinsetter functions are from the PWM outputs (up to 16 available on the PCA9
 
 > None of these are *strapping* pins, so no problems uploading code while connected!
 
-**Pin 4** EN to stepper driver and PCA9685 PWM IC (active LOW)
+**GPIO 4** EN to stepper driver and PCA9685 PWM IC (active LOW)
 
-**Pin 13** Pixel data OUT for addressable led strip
+**GPIO 13** Pixel data OUT for addressable led strip
 
-**PIN 14** Maintenance LED OUT
+**GPIO 14** Maintenance LED OUT
 
-**Pin 16** Serial RX. Not in use (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
+**GPIO 16** Serial RX. Not in use (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
 
-**Pin 17** Serial TX. Not in use (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
+**GPIO 17** Serial TX. Not in use (could be integrated with [ScoreMore](https://www.scoremorebowling.com))
 
-**PIN 18** STEP OUT to any suitable stepper driver. I'm using a TMC2009 with the smaller NEMA17 motor.
+**GPIO 18** STEP OUT to any suitable stepper driver. I'm using a TMC2009 with the smaller NEMA17 motor.
 
-**PIN 19** DIR OUT to any suitable stepper driver. I'm using a TMC2009 with the smaller NEMA17 motor.
+**GPIO 19** DIR OUT to any suitable stepper driver. I'm using a TMC2009 with the smaller NEMA17 motor.
 
-**PIN 21** I2C SDA (data)
+**GPIO 21** I2C SDA (data)
 
-**PIN 22** I2C SCL (clock)
+**GPIO 22** I2C SCL (clock)
 
-**PIN 25** SELECT3 button IN (use 10K pullup resistor to 3.3V)
+**GPIO 25** SELECT3 button IN (use 10K pullup resistor to 3.3V)
 
-**PIN 26** MAINTENANCE button IN (use 10K pullup resistor to 3.3V)
+**GPIO 26** MAINTENANCE button IN (use 10K pullup resistor to 3.3V)
 
-**PIN 27** HOME button IN (use 10K pullup resistor to 3.3V)
+**GPIO 27** HOME button IN (use 10K pullup resistor to 3.3V)
 
-**PIN 32** SELECT1 button IN (use 10K pullup resistor to 3.3V)
+**GPIO 32** SELECT1 button IN (use 10K pullup resistor to 3.3V)
 
-**PIN 33** SELECT2 button IN (use 10K pullup resistor to 3.3V)
+**GPIO 33** SELECT2 button IN (use 10K pullup resistor to 3.3V)
 
-**PIN 34** IR pin sensor IN
+**GPIO 34** IR pin sensor IN
 
-**PIN 35** Turret hall effect home sensor IN
+**GPIO 35** Turret hall effect home sensor IN
 
-**PIN 36** Ball speed sensor IN
+**GPIO 36** Ball speed sensor IN
 
-**PIN 39** Ball break sensor IN
+**GPIO 39** Ball break sensor IN
