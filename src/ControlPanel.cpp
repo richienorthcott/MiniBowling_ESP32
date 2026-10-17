@@ -10,14 +10,14 @@ void ControlPanel::begin(){
     _lcd->backlight();
     _pindicator.begin();
     currentPose = ControlPanelPage::INIT;
-    mainMenu();
+    initMenu();
 }
 
 void ControlPanel::initMenu(){
     _lcd->clear();
     _lcd->setCursor(0,0); _lcd->print("    MINI BOWLING    ");
     _lcd->setCursor(0,1); _lcd->print("    ============    ");
-    _lcd->setCursor(0,2); _lcd->print("    Pleaes wait...  ");
+    _lcd->setCursor(0,2); _lcd->print("    Please wait...  ");
 }
 
 void ControlPanel::mainMenu(){
@@ -33,6 +33,7 @@ void ControlPanel::mainMenu(){
     result = this-showPinsetterStatus(lastStatus);
     result = this->showSlot(lastLoad);
     result = this->showDeck(lastDeck);
+    result = this->showMotor(lastMotor);
     _lcd->setCursor(0, 3);_lcd->print("cycle |motor |util  ");   
 }
 
@@ -61,6 +62,7 @@ bool ControlPanel::showMessage(ControlPanel::ControlPanelMessage msg){
     lastMessage = msg;
     if(currentPose != ControlPanelPage::MAIN) return false;
     _lcd->setCursor(0, 1);
+    _lcd->print("msg:");
     switch(lastMessage){
         case ControlPanelMessage::BOWL1:
             _lcd->print("Bowl first ball");
@@ -92,6 +94,18 @@ bool ControlPanel::showSlot(uint8_t turretSlot){
     if(currentPose != ControlPanelPage::MAIN) return false;
     _lcd->setCursor(12, 2);
     _lcd->print(lastLoad);
+    return true;
+}
+
+bool ControlPanel::showMotor(bool motor){
+    lastMotor =  motor;
+    if(currentPose != ControlPanelPage::MAIN) return false;
+    _lcd->setCursor(0, 0);
+    if(motor){
+        _lcd->print("RUN  ");
+    }else{
+        _lcd->print("PAUSE");
+    }
     return true;
 }
 

@@ -83,7 +83,7 @@
 #define SENSOR_DEBOUNCE_MS 600 //milliseconds
 
 #define CONVEYOR_TIMEOUT_MS 30000 //milliseconds
-#define MAX_BALL_SPEED 2000//ignore any speed sensings bigger than this
+#define MAX_BALL_SPEED 800//ignore any speed sensings bigger than this
 
 //pinsetter motion timings (in 'frames')
 #define TWEEN_FRAMES 20
@@ -97,3 +97,4 @@
 #define PIN_RELEASE 25
 #define DECK_MID_RISE 20
 #define DECK_UP 30
+#define CYCLE_DELAY 40

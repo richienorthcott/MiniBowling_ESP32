@@ -35,13 +35,14 @@ class Pinsetter{
             LIFTPINS,
             PINSLIFTED,
             PINSREPLACING,
-            PINSREPLACED
+            PINSREPLACED,
+            CYCLE,
+            DELAYCYCLE
         };
         
         enum PinsetterMode{            
             INITIALISING1,
-            INITIALISING2,
-            INITIALISING3,
+            INITIALISING2,        
             THROW_ONE,
             THROW_TWO
         };
@@ -51,20 +52,19 @@ class Pinsetter{
             uint8_t turretSlot;
             PinsetterPose operatingMode;
             bool throwOne;
+            bool motorRunning;
         };
 
-        void begin();           //initialises the pinsetter
-        void heartbeat();       //call periodically for sweep tweens etc. This is passed to other objects.
+        void begin();                   //initialises the pinsetter
+        void heartbeat();               //call periodically for sweep tweens etc. This is passed to other objects.
         
-        void turretHomed();     //called by sensor interrupt from main program 
-        void pinSense();        //called by sensor interrupt from main program
-        bool doCycle();         //trigger the pinsetter cycle  
-        void startConveyor();   //restart the coneyor if stopped.      
+        void turretHomed();             //called by sensor interrupt from main program 
+        void pinSense();                //called by sensor interrupt from main program
+        bool doCycle(bool pause);       //trigger the pinsetter cycle. Set pause= true to include a delay.
+        void startMotor();           //restart the coneyor if stopped.      
         
         pinsetterStatus getStatus();    //returns a struct of current pinsetter status
-        
-        void bypassCycle(bool bypass);  //callback from main loop. Send true if no pins kocked over
-        void submitStrike(bool strike); //callback from main loop. Send true if all pins knocked over on throw 1
+    
     private:        
         PinsetterPose currentPose = PinsetterPose::INIT;    
         PinsetterMode currentMode = PinsetterMode::INITIALISING1;

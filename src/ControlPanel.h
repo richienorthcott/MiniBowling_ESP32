@@ -35,7 +35,8 @@ class ControlPanel{
         bool showPinsetterStatus(Pinsetter::PinsetterPose status);//prints the number of the active pinsetter state enum
         bool showSlot(uint8_t turretSlot);
         bool showDeck(bool loaded);
-        
+        bool showMotor(bool motor);
+
         void submitPins(PinSensor::pinStatus pinsAndScore);
         void clearPins();
         
@@ -55,4 +56,5 @@ class ControlPanel{
         ControlPanelMessage lastMessage = ControlPanelMessage::WAIT;
         Pinsetter::PinsetterPose lastStatus = Pinsetter::PinsetterPose::INIT;
         bool lastDeck = false;
+        bool lastMotor = false;
 };

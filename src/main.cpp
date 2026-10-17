@@ -37,6 +37,7 @@ volatile bool toggleReset = false;
 //these vars are passed to the LCD display
 uint8_t currentTurretSlot = 0;
 bool deckIsLoaded = false;
+bool motorRunning = false;
 ControlPanel::ControlPanelPage currentPage = ControlPanel::ControlPanelPage::INIT;
 
 void ARDUINO_ISR_ATTR onTimer() {
@@ -63,7 +64,7 @@ void ARDUINO_ISR_ATTR onResetButton(){
 }
 
 void ARDUINO_ISR_ATTR onHomeButton(){
-    //all the control panel buttons suffered cross-talk, checkin pin status resolves this 
+    //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastHome > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_HOME)){
             lastHome = millis();
@@ -73,6 +74,7 @@ void ARDUINO_ISR_ATTR onHomeButton(){
 }
 
 void ARDUINO_ISR_ATTR onSelect1(){
+    //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastSelect1 > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_SELECT1)){
             lastSelect1 = millis();
@@ -82,6 +84,7 @@ void ARDUINO_ISR_ATTR onSelect1(){
 }
 
 void ARDUINO_ISR_ATTR onSelect2(){
+    //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastSelect2 > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_SELECT2)){
             lastSelect2 = millis();
@@ -91,6 +94,7 @@ void ARDUINO_ISR_ATTR onSelect2(){
 }
  
 void ARDUINO_ISR_ATTR onSelect3(){
+    //all the control panel buttons suffered cross-talk, checking pin status resolves this 
     if(millis() - lastSelect3 > DEBOUNCE_MS){
         if(!digitalRead(BUTTON_SELECT3)){
             lastSelect3 = millis();
@@ -151,10 +155,14 @@ void setupInterrupts(){
 
 void setupPins(){
     pinMode(EN_PIN, OUTPUT);
+    digitalWrite(EN_PIN, LOW);    //enable the pinsetter    
+
+    pinMode(LED_RESET, OUTPUT);
+    digitalWrite(LED_RESET, LOW); //turn off the reset LED
+
     pinMode(STEP_PIN, OUTPUT);
     pinMode(DIR_PIN, OUTPUT);
-    pinMode(LED_RESET, OUTPUT);
-    
+
     pinMode(BUTTON_RESET, INPUT);
     pinMode(BUTTON_HOME, INPUT);
     pinMode(BUTTON_SELECT1, INPUT);     
@@ -165,8 +173,8 @@ void setupPins(){
     pinMode(IR_SENSOR_PIN, INPUT);
     pinMode(TURRET_HOME_PIN, INPUT);
     
-    digitalWrite(LED_RESET, LOW); //turn off the reset LED
-    digitalWrite(EN_PIN, LOW);    //enable the pinsetter    
+    
+    
 }
 
 void resetPinsetter(){
@@ -197,7 +205,7 @@ void handleFlags(){
         currentPage = controlPanel.currentPose;
         switch(currentPage){
             case ControlPanel::ControlPanelPage::MAIN:
-                if(pinsetter.doCycle()){
+                if(pinsetter.doCycle(false)){
                     controlPanel.showSpeed(0);
                     laneLighting.comet();
                 }
@@ -218,7 +226,7 @@ void handleFlags(){
         currentPage = controlPanel.currentPose;
         switch(currentPage){
             case ControlPanel::ControlPanelPage::MAIN:
-                pinsetter.startConveyor();
+                pinsetter.startMotor();
                 break;
             case ControlPanel::ControlPanelPage::UTIL:
                 controlPanel.scoreMenu();
@@ -269,7 +277,7 @@ void handleFlags(){
     }
 
     if(flag_ballSense){
-        if(pinsetter.doCycle()) laneLighting.comet();
+        if(pinsetter.doCycle(true)) laneLighting.comet();
         flag_ballSense = false;
     }
     
@@ -327,12 +335,14 @@ void setup() {
 
 void loop() {       
     handleFlags();
-    //get a struct from the 
     Pinsetter::pinsetterStatus machineStatus = pinsetter.getStatus();
-    
-    //if(machineStatus.startup) return; // nothing to do as machine is in initialisation cycle. Exit the loop.
+    bool result;//control panel functions return true/false which show if the screen was actually updated. Will depend on current control panel screen/mode
 
-    bool result;
+    if(machineStatus.motorRunning != motorRunning){
+        //send the current slot to the LCD display. This is worth doing always as it's cached if not actively on screen
+        result = controlPanel.showMotor(machineStatus.motorRunning );
+        motorRunning = machineStatus.motorRunning ;
+    }
 
     if(machineStatus.turretSlot != currentTurretSlot){
         //send the current slot to the LCD display. This is worth doing always as it's cached if not actively on screen
@@ -342,7 +352,7 @@ void loop() {
 
     if(machineStatus.deckLoaded != deckIsLoaded){
         //send the current deck loaded true/false to the LCD display. This is worth doing always as it's cached if not actively on screen
-        result = controlPanel.showSlot(machineStatus.deckLoaded );
+        result = controlPanel.showDeck(machineStatus.deckLoaded );
         deckIsLoaded = machineStatus.deckLoaded ;
     }     
     
