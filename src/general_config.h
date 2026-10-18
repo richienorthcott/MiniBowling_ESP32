@@ -68,6 +68,8 @@
 #define TURRET_MOVE_OFF_SENSOR  80
 #define TURRET_ADVANCE_DELAY_MS 800  //milliseconds
 #define TURRET_PAUSE_SLOT  8 //turret will pause conveyor on this slot if the deck has pins in, to prevent jams 
+#define TURRET_CCW -1 //set to 1 or -1 for CW or CCW. Or change the motor connections over! 
+#define TURRET_CW 1 //set to 1 or -1 for CW or CCW. Or change the motor connections over! 
 
 #define LANE_PIXEL_COUNT        86
 #define LANE_PIXELS_INTENSITY1  80

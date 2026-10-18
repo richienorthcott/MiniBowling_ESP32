@@ -5,26 +5,26 @@ Turret::Turret(){}
 void Turret::begin(FastAccelStepperEngine* engine){
     _engine = engine;
     _engine->init();
+    
     _stepper = engine->stepperConnectToPin(STEP_PIN);
     _stepper->setDirectionPin(DIR_PIN);
-    
     _stepper->setSpeedInHz(TURRET_SPEED_HOMING);
     _stepper->setAcceleration(TURRET_ACCEL_HOMING);
         
-    deckHasPins = true;//use this to clear the deck on startup
-    
     if(!digitalRead(TURRET_HOME_PIN)){
-        _stepper->moveTo(TURRET_MOVE_OFF_SENSOR * -1);
+        _stepper->moveTo(TURRET_MOVE_OFF_SENSOR * TURRET_CCW);
         currentPose = TurretPose::MOVEOFFHOME;
     }else{
         currentPose = TurretPose::HOMING;
-        _stepper->move(TURRET_STEPS_PER_REV);
+        _stepper->move(TURRET_STEPS_PER_REV * TURRET_CW);
     }
+
+    deckHasPins = true;//use this to clear the deck on startup
 }
 
 void Turret::homeSense(){
     if(currentPose == TurretPose::HOMING){
-        _stepper->forceStopAndNewPosition(TURRET_HOME_OFFSET);
+        _stepper->forceStopAndNewPosition(TURRET_HOME_OFFSET * TURRET_CW);
         _stepper->moveTo(0, false);
         currentPose = TurretPose::MOVETOSLOT0;
     }
@@ -35,7 +35,7 @@ void Turret::heartbeat(){
         case TurretPose::MOVEOFFHOME:
             if(!_stepper->isRunning()){
                  currentPose = TurretPose::HOMING;
-                _stepper->move(TURRET_STEPS_PER_REV);
+                _stepper->move(TURRET_STEPS_PER_REV * TURRET_CW);
             }
             break;
         case TurretPose::MOVETOSLOT0:
@@ -44,8 +44,6 @@ void Turret::heartbeat(){
                 _stepper->setAcceleration(TURRET_ACCEL_RUN);
                 currentPose = TurretPose::RECEIVEPINS;
                 currentSlot = 0;
-            }else{
-                Serial.println("running");
             }
             break;
         case TurretPose::RECEIVEPINS:
@@ -66,31 +64,31 @@ void Turret::moveToSlot(uint8_t pin){
             _stepper->moveTo(0);
             break;
         case 1:
-            _stepper->moveTo(TURRET_POSITION1 * -1);
+            _stepper->moveTo(TURRET_POSITION1 * TURRET_CCW);
             break;    
         case 2:
-            _stepper->moveTo(TURRET_POSITION2 * -1);
+            _stepper->moveTo(TURRET_POSITION2 * TURRET_CCW);
             break;
         case 3:
-            _stepper->moveTo(TURRET_POSITION3 * -1);
+            _stepper->moveTo(TURRET_POSITION3 * TURRET_CCW);
             break;
         case 4:
-            _stepper->moveTo(TURRET_POSITION4 * -1);
+            _stepper->moveTo(TURRET_POSITION4 * TURRET_CCW);
             break;
         case 5:
-            _stepper->moveTo(TURRET_POSITION5 * -1);
+            _stepper->moveTo(TURRET_POSITION5 * TURRET_CCW);
             break;
         case 6:
-            _stepper->moveTo(TURRET_POSITION6 * -1);
+            _stepper->moveTo(TURRET_POSITION6 * TURRET_CCW);
             break;
         case 7:
-            _stepper->moveTo(TURRET_POSITION7 * -1);
+            _stepper->moveTo(TURRET_POSITION7 * TURRET_CCW);
             break;
         case 8:
-            _stepper->moveTo(TURRET_POSITION8 * -1);
+            _stepper->moveTo(TURRET_POSITION8 * TURRET_CCW);
             break;
         case 9:
-            _stepper->moveTo(TURRET_POSITION9 * -1);
+            _stepper->moveTo(TURRET_POSITION9 * TURRET_CCW);
             break;
     }   
 };
@@ -109,31 +107,31 @@ void Turret::advanceTurret(){
             _stepper->moveTo(0);
             break;
         case 1:
-            _stepper->moveTo(TURRET_POSITION1 * -1);
+            _stepper->moveTo(TURRET_POSITION1 * TURRET_CCW);
             break;    
         case 2:
-            _stepper->moveTo(TURRET_POSITION2 * -1);
+            _stepper->moveTo(TURRET_POSITION2 * TURRET_CCW);
             break;
         case 3:
-            _stepper->moveTo(TURRET_POSITION3 * -1);
+            _stepper->moveTo(TURRET_POSITION3 * TURRET_CCW);
             break;
         case 4:
-            _stepper->moveTo(TURRET_POSITION4 * -1);
+            _stepper->moveTo(TURRET_POSITION4 * TURRET_CCW);
             break;
         case 5:
-            _stepper->moveTo(TURRET_POSITION5 * -1);
+            _stepper->moveTo(TURRET_POSITION5 * TURRET_CCW);
             break;
         case 6:
-            _stepper->moveTo(TURRET_POSITION6 * -1);
+            _stepper->moveTo(TURRET_POSITION6 * TURRET_CCW);
             break;
         case 7:
-            _stepper->moveTo(TURRET_POSITION7 * -1);
+            _stepper->moveTo(TURRET_POSITION7 * TURRET_CCW);
             break;
         case 8:
-            _stepper->moveTo(TURRET_POSITION8 * -1);
+            _stepper->moveTo(TURRET_POSITION8 * TURRET_CCW);
             break;
         case 9:
-            _stepper->moveTo(TURRET_POSITION9 * -1);
+            _stepper->moveTo(TURRET_POSITION9 * TURRET_CCW);
             break;
     }   
 }
