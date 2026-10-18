@@ -1,18 +1,19 @@
 #include <Pinsetter.h>
 
-Pinsetter::Pinsetter(Adafruit_PWMServoDriver* servos, MoToStepper* stepper):_deck(servos), _sweep(servos), _ballReturn(servos), _mainMotor(servos), _throwLEDs(servos), _deckLighting(servos), _turret(stepper){
+Pinsetter::Pinsetter(Adafruit_PWMServoDriver* servos):_deck(servos), _sweep(servos), _ballReturn(servos), _mainMotor(servos), _throwLEDs(servos), _deckLighting(servos),_turret(){
      _servoInterface = servos;
-     _stepper = stepper;
+   
 }
 
-void Pinsetter::begin(){
+void Pinsetter::begin(FastAccelStepperEngine* engine){
+     _engine = engine;
      _deck.begin();
      _sweep.begin();
      _ballReturn.begin();
      _mainMotor.begin();
      _throwLEDs.begin();
      _deckLighting.begin();
-     _turret.begin();
+     _turret.begin(engine);
 
      currentPose = PinsetterPose::INIT;
      currentMode = PinsetterMode::INITIALISING1;

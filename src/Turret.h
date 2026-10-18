@@ -1,22 +1,23 @@
 #pragma once
-#include <MobaTools.h>
-#include <Globals.h>
+#include <FastAccelStepper.h>
+#include <pin_config.h>
+#include <general_config.h>
 
 class Turret{
     public:
-        Turret(MoToStepper* stepper);
+        Turret();
 
         enum TurretPose{
             STARTUP,
-            MOVEOFFHOME,
             HOMING,
+            MOVEOFFHOME,
             MOVETOSLOT0,
             RECEIVEPINS
         };
 
         TurretPose currentPose = STARTUP;
 
-        void begin();
+        void begin(FastAccelStepperEngine* engine);
         void heartbeat();
         
         void homeSense();                //Notify the turret the home sensor has been activated
@@ -26,7 +27,9 @@ class Turret{
         bool deckHasPins = false;        //Public property, set to true if the deck has had pins released into it
         uint8_t currentSlot = 0;         //Public property, returns the currently active turret slot
     private:
-        MoToStepper* _stepper;        
+        FastAccelStepperEngine* _engine;    
+        FastAccelStepper* _stepper = NULL;
+    
         void advanceTurret();            //Initialise a delay to advance to the next slot
         bool delayActive = false;
         unsigned long delayStarted = 0;

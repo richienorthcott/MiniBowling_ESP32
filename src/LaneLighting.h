@@ -16,6 +16,7 @@ class LaneLighting{
             CHASEWHITE,
             CHASEGREEN,
             CHASERAINBOW,
+            CHASELAVA,
             STRIKE
         };        
 
@@ -27,7 +28,8 @@ class LaneLighting{
         //animations. These all need the heartbeat function to advance.
         void comet();
         void strike();
-        void rainbowAnim();        
+        void rainbowAnim();
+        void lavaAnim();
         void wipeGreen();        
     
     private:                

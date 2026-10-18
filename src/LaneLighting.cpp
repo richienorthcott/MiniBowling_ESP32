@@ -60,6 +60,13 @@ void LaneLighting::rainbowAnim(){
     _currentMode = LIGHTINGMODE::CHASERAINBOW;
 }
 
+void LaneLighting::lavaAnim(){
+    chaseIndex = 0;    
+    FastLED.setBrightness(LANE_PIXELS_INTENSITY1);
+    _currentMode = LIGHTINGMODE::CHASELAVA;
+}
+
+
 
 void LaneLighting::heartbeat(){
     #define step 5
@@ -82,6 +89,11 @@ void LaneLighting::heartbeat(){
             break;
         case LIGHTINGMODE::CHASERAINBOW:
             fill_palette(leds, LANE_PIXEL_COUNT, chaseIndex, 3, RainbowColors_p, 255, fl::LINEARBLEND);            
+            chaseIndex += 1;
+            FastLED.show();
+            break;        
+        case LIGHTINGMODE::CHASELAVA:
+            fill_palette(leds, LANE_PIXEL_COUNT, chaseIndex, 3, LavaColors_p, 255, fl::LINEARBLEND);            
             chaseIndex += 1;
             FastLED.show();
             break;        

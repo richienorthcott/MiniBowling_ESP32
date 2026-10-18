@@ -4,7 +4,7 @@
 #include <Sweep.h>
 #include <Turret.h>
 #include <Pindicator.h>
-#include <MobaTools.h>
+#include <FastAccelStepper.h>
 #include <ControlPanel.h>
 #include <LiquidCrystal_I2C.h>
 #include <ht16k33.h>
@@ -18,12 +18,12 @@ hw_timer_t *heartbeat = NULL;
 
 PCF8575 pinSensors(PCF8575_ADDRESS);
 Adafruit_PWMServoDriver servos(PCA9685_ADDRESS);
-MoToStepper turretStepper(TURRET_STEPS_PER_REV, STEPDIR);
 LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLS, LCD_ROWS);
 HT16K33 ledmatrixdriver;
 CRGB lane_leds[LANE_PIXEL_COUNT];
+FastAccelStepperEngine engine = FastAccelStepperEngine();
 
-Pinsetter pinsetter(&servos, &turretStepper);
+Pinsetter pinsetter(&servos);
 LaneLighting laneLighting(lane_leds);
 ControlPanel controlPanel(&lcd, &ledmatrixdriver);
 PinSensor sensorArray(&pinSensors);
@@ -172,15 +172,12 @@ void setupPins(){
     pinMode(BALL_SPEED_PIN, INPUT);
     pinMode(IR_SENSOR_PIN, INPUT);
     pinMode(TURRET_HOME_PIN, INPUT);
-    
-    
-    
 }
 
 void resetPinsetter(){
-    pinsetter.begin();
+    pinsetter.begin(&engine);
     controlPanel.begin();
-    laneLighting.solidBlue();
+    laneLighting.lavaAnim();
 }
 
 void handleFlags(){
@@ -323,8 +320,9 @@ void setup() {
 
     setupInterrupts();
     setupTimer();  
-    turretStepper.attach(STEP_PIN, DIR_PIN);
   
+    engine.init();
+
     servos.begin();
     servos.setPWMFreq(SERVO_PWM_FREQUENCY);
     delay(10);
@@ -357,10 +355,7 @@ void loop() {
     }     
     
     //check for change in pinsetter machine state
-    if(machineStatus.operatingMode != machineState){        
-        
-        Serial.println(machineStatus.operatingMode);
-        
+    if(machineStatus.operatingMode != machineState){                
         machineState = machineStatus.operatingMode;               
         result = controlPanel.showPinsetterStatus(machineState);
 

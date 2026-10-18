@@ -1,6 +1,6 @@
 #pragma once
 #include <Globals.h>
-#include <MobaTools.h>
+#include <FastAccelStepper.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Deck.h>
 #include <Sweep.h>
@@ -12,7 +12,7 @@
 
 class Pinsetter{
     public:
-        Pinsetter(Adafruit_PWMServoDriver* servos, MoToStepper* stepper);
+        Pinsetter(Adafruit_PWMServoDriver* servos);
         
         enum PinsetterPose{
             INIT,
@@ -55,7 +55,7 @@ class Pinsetter{
             bool motorRunning;
         };
 
-        void begin();                   //initialises the pinsetter
+        void begin(FastAccelStepperEngine* engine);                   //initialises the pinsetter
         void heartbeat();               //call periodically for sweep tweens etc. This is passed to other objects.
         
         void turretHomed();             //called by sensor interrupt from main program 
@@ -69,7 +69,7 @@ class Pinsetter{
         PinsetterPose currentPose = PinsetterPose::INIT;    
         PinsetterMode currentMode = PinsetterMode::INITIALISING1;
         Adafruit_PWMServoDriver* _servoInterface;
-        MoToStepper* _stepper;
+        FastAccelStepperEngine* _engine;
         Deck _deck;
         Sweep _sweep;
         BallReturn _ballReturn;
