@@ -10,11 +10,14 @@ void Turret::begin(FastAccelStepperEngine* engine){
     _stepper->setDirectionPin(DIR_PIN);
     _stepper->setSpeedInHz(TURRET_SPEED_HOMING);
     _stepper->setAcceleration(TURRET_ACCEL_HOMING);
-        
+    
+    //check if the turret homing sensor is already active on startup
     if(!digitalRead(TURRET_HOME_PIN)){
+        //move off the homing sensor at slow speed
         _stepper->moveTo(TURRET_MOVE_OFF_SENSOR * TURRET_CCW);
         currentPose = TurretPose::MOVEOFFHOME;
     }else{
+        //move CW towards the homing sensor at slow speed
         currentPose = TurretPose::HOMING;
         _stepper->move(TURRET_STEPS_PER_REV * TURRET_CW);
     }
@@ -23,6 +26,7 @@ void Turret::begin(FastAccelStepperEngine* engine){
 }
 
 void Turret::homeSense(){
+    //notification from honing sensor
     if(currentPose == TurretPose::HOMING){
         _stepper->forceStopAndNewPosition(TURRET_HOME_OFFSET * TURRET_CW);
         _stepper->moveTo(0, false);
@@ -34,11 +38,14 @@ void Turret::heartbeat(){
     switch(currentPose){
         case TurretPose::MOVEOFFHOME:
             if(!_stepper->isRunning()){
-                 currentPose = TurretPose::HOMING;
+                //turret has moved off homing sensor (was active on startup). Now home as normal.
+                currentPose = TurretPose::HOMING;
                 _stepper->move(TURRET_STEPS_PER_REV * TURRET_CW);
             }
             break;
         case TurretPose::MOVETOSLOT0:
+            //homing is complete. set the speed and accel higher from now on
+            //set to receive state
             if(!_stepper->isRunning()){
                 _stepper->setSpeedInHz(TURRET_SPEED_RUN);
                 _stepper->setAcceleration(TURRET_ACCEL_RUN);
@@ -47,6 +54,7 @@ void Turret::heartbeat(){
             }
             break;
         case TurretPose::RECEIVEPINS:
+            //check if a turret advance is necessary 
             if(delayActive){
                 if(millis() - delayStarted > TURRET_ADVANCE_DELAY_MS){
                     delayActive=false;
@@ -137,6 +145,8 @@ void Turret::advanceTurret(){
 }
 
 void Turret::pinSense(){
+    //notify the turret that a pin is on the eay. Start timeout.
+    //when elapsed, the main heartbeat function will pick up on this and advance the turret one slot.
     delayActive = true;
     delayStarted = millis();
 }
