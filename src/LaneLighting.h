@@ -31,7 +31,7 @@ class LaneLighting{
         void rainbowAnim();
         void lavaAnim();
         void wipeGreen();        
-    
+
     private:                
         CRGB* leds;
         LIGHTINGMODE _currentMode = LIGHTINGMODE::NORMAL;

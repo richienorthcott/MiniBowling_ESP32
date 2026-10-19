@@ -205,7 +205,7 @@ void Pinsetter::heartbeat(){
                break;
           
           case PinsetterPose::READY:
-               //enter the ready state. In this state, pinsetter will respond to cycle requests from the doCycle() function
+               //enter the ready state. In this state, pinsetter will respond to cycle requests from the doCycle() function               
                break;
 
           case PinsetterPose::THROWONE:

@@ -66,8 +66,6 @@ void LaneLighting::lavaAnim(){
     _currentMode = LIGHTINGMODE::CHASELAVA;
 }
 
-
-
 void LaneLighting::heartbeat(){
     #define step 5
 
@@ -97,6 +95,7 @@ void LaneLighting::heartbeat(){
             chaseIndex += 1;
             FastLED.show();
             break;        
+     
         case LIGHTINGMODE::CHASEGREEN:
             leds[chaseIndex] = CRGB::Green;
             leds[chaseIndex +1 ] = CRGB::Green;
