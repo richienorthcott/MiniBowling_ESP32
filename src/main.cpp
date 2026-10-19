@@ -1,12 +1,10 @@
 #include <Globals.h>
 #include <Adafruit_PWMServoDriver.h>
-#include <Pinsetter.h>
-#include <Sweep.h>
-#include <Turret.h>
 #include <FastAccelStepper.h>
-#include <DeckLighting.h>
-#include <LaneLighting.h>
 #include <FastLED.h>
+
+#include <Pinsetter.h>
+#include <LaneLighting.h>
 
 hw_timer_t *heartbeat = NULL;
 
@@ -212,7 +210,7 @@ void setup() {
     servos.begin();
     servos.setPWMFreq(SERVO_PWM_FREQUENCY);
     delay(10);
-    
+
     resetPinsetter();
 }
 
