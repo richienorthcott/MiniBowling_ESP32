@@ -3,7 +3,9 @@
 This is as per the main branch but without display, menu system and speed sensor. The reset button is still available, select buttons 1-3 have the folllowing fixed functions:
 
 **Select 1** - cycle (no delay)
+
 **Select 2** - start motor (if stopped)
+
 **Select 3** - reset everything to power on state
 
 ## ESP32 GPIO pins
