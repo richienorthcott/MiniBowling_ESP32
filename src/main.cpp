@@ -3,42 +3,25 @@
 #include <Pinsetter.h>
 #include <Sweep.h>
 #include <Turret.h>
-#include <Pindicator.h>
 #include <FastAccelStepper.h>
-#include <ControlPanel.h>
-#include <LiquidCrystal_I2C.h>
-#include <ht16k33.h>
 #include <DeckLighting.h>
 #include <LaneLighting.h>
 #include <FastLED.h>
-#include <PCF8575.h>
-#include <PinSensor.h>
 
 hw_timer_t *heartbeat = NULL;
 
-PCF8575 pinSensors(PCF8575_ADDRESS);
 Adafruit_PWMServoDriver servos(PCA9685_ADDRESS);
-LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLS, LCD_ROWS);
-HT16K33 ledmatrixdriver;
 CRGB lane_leds[LANE_PIXEL_COUNT];
 FastAccelStepperEngine engine = FastAccelStepperEngine();
 
 Pinsetter pinsetter(&servos);
 LaneLighting laneLighting(lane_leds);
-ControlPanel controlPanel(&lcd, &ledmatrixdriver);
-PinSensor sensorArray(&pinSensors);
 
 Pinsetter::PinsetterPose machineState = Pinsetter::PinsetterPose::INIT;
 
-volatile bool flag_updateHeartbeat, flag_btn_home, flag_btn_reset, flag_btn_select1, flag_btn_select2, flag_btn_select3, flag_ballSense, flag_ballSpeed, flag_pinSense, flag_homeSense, flag_maintenance_on, flag_maintenance_off = false;
-volatile unsigned long lastHome, lastReset, lastSelect1, lastSelect2, lastSelect3, lastBallSense, lastBallSpeed, lastPinSense, lastHomeSense = 0;
+volatile bool flag_updateHeartbeat, flag_btn_reset, flag_btn_select1, flag_btn_select2, flag_btn_select3, flag_ballSense, flag_pinSense, flag_homeSense, flag_maintenance_on, flag_maintenance_off = false;
+volatile unsigned long  lastReset, lastSelect1, lastSelect2, lastSelect3, lastBallSense, lastPinSense, lastHomeSense = 0;
 volatile bool toggleReset = false;
-
-//these vars are passed to the LCD display
-uint8_t currentTurretSlot = 0;
-bool deckIsLoaded = false;
-bool motorRunning = false;
-ControlPanel::ControlPanelPage currentPage = ControlPanel::ControlPanelPage::INIT;
 
 void ARDUINO_ISR_ATTR onTimer() {
     flag_updateHeartbeat = true;
@@ -59,16 +42,6 @@ void ARDUINO_ISR_ATTR onResetButton(){
                 digitalWrite(LED_RESET, HIGH);
                 toggleReset = true;
             }
-        }
-    }
-}
-
-void ARDUINO_ISR_ATTR onHomeButton(){
-    //all the control panel buttons suffered cross-talk, checking pin status resolves this 
-    if(millis() - lastHome > DEBOUNCE_MS){
-        if(!digitalRead(BUTTON_HOME)){
-            lastHome = millis();
-            flag_btn_home = true;
         }
     }
 }
@@ -111,13 +84,6 @@ void ARDUINO_ISR_ATTR onBallSense(){
     }
 }
 
-void ARDUINO_ISR_ATTR onBallSpeed(){
-    if(millis() - lastBallSpeed > SENSOR_DEBOUNCE_MS){
-            lastBallSpeed = millis();
-            flag_ballSpeed = true;
-    }
-}
-
 void ARDUINO_ISR_ATTR onTurretHome(){
     if(millis() - lastHomeSense > DEBOUNCE_MS){
          if(!digitalRead(TURRET_HOME_PIN)){
@@ -143,12 +109,10 @@ void setupTimer(){
 
 void setupInterrupts(){
     attachInterrupt(BUTTON_RESET, onResetButton, FALLING);
-    attachInterrupt(BUTTON_HOME, onHomeButton, FALLING);
     attachInterrupt(BUTTON_SELECT1, onSelect1, FALLING);
     attachInterrupt(BUTTON_SELECT2, onSelect2, FALLING);
     attachInterrupt(BUTTON_SELECT3, onSelect3, FALLING);
     attachInterrupt(BALL_SENSOR_PIN, onBallSense, FALLING);
-    attachInterrupt(BALL_SPEED_PIN, onBallSpeed, FALLING);
     attachInterrupt(IR_SENSOR_PIN, onPinSense, FALLING);
     attachInterrupt(TURRET_HOME_PIN, onTurretHome, FALLING);
 }
@@ -164,19 +128,16 @@ void setupPins(){
     pinMode(DIR_PIN, OUTPUT);
 
     pinMode(BUTTON_RESET, INPUT);
-    pinMode(BUTTON_HOME, INPUT);
     pinMode(BUTTON_SELECT1, INPUT);     
     pinMode(BUTTON_SELECT2, INPUT);
     pinMode(BUTTON_SELECT3, INPUT);
     pinMode(BALL_SENSOR_PIN, INPUT);
-    pinMode(BALL_SPEED_PIN, INPUT);
     pinMode(IR_SENSOR_PIN, INPUT);
     pinMode(TURRET_HOME_PIN, INPUT);
 }
 
 void resetPinsetter(){
     pinsetter.begin(&engine);
-    controlPanel.begin();
     laneLighting.lavaAnim();
 }
 
@@ -199,94 +160,23 @@ void handleFlags(){
     }
 
     if(flag_btn_select1){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
-            case ControlPanel::ControlPanelPage::MAIN:
-                if(pinsetter.doCycle(false)){
-                    controlPanel.showSpeed(0);
-                    laneLighting.comet();
-                }
-                break;
-            case ControlPanel::ControlPanelPage::UTIL:
-                controlPanel.lightMenu();
-                break;
-            case ControlPanel::ControlPanelPage::LIGHT:
-                laneLighting.rainbowAnim();
-                break;
-            case ControlPanel::ControlPanelPage::SCORE:
-                break;
-            }
+        if(pinsetter.doCycle(false))laneLighting.comet();
         flag_btn_select1 = false;
     }
 
     if(flag_btn_select2){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
-            case ControlPanel::ControlPanelPage::MAIN:
-                pinsetter.startMotor();
-                break;
-            case ControlPanel::ControlPanelPage::UTIL:
-                controlPanel.scoreMenu();
-                break;
-            case ControlPanel::ControlPanelPage::LIGHT:
-                laneLighting.strike();
-                break;
-            case ControlPanel::ControlPanelPage::SCORE:
-                break;
-            
-        }
+        pinsetter.startMotor();
         flag_btn_select2 = false;
     }
 
     if(flag_btn_select3){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
-                case ControlPanel::ControlPanelPage::MAIN:
-                controlPanel.utilMenu();
-                break;
-            case ControlPanel::ControlPanelPage::UTIL:
-                resetPinsetter();
-                break;
-            case ControlPanel::ControlPanelPage::LIGHT:
-                laneLighting.wipeGreen();
-                break;
-            case ControlPanel::ControlPanelPage::SCORE:
-                break;
-        }
+        laneLighting.wipeGreen();
         flag_btn_select3 = false;
-    }
-
-    if(flag_btn_home){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
-            case ControlPanel::ControlPanelPage::UTIL:
-                controlPanel.mainMenu();
-                break;
-            case ControlPanel::ControlPanelPage::LIGHT:
-                controlPanel.utilMenu();
-                break;
-            case ControlPanel::ControlPanelPage::SCORE:
-                controlPanel.utilMenu();
-                break;
-                
-        }
-        flag_btn_home = false;
     }
 
     if(flag_ballSense){
         if(pinsetter.doCycle(true)) laneLighting.comet();
         flag_ballSense = false;
-    }
-    
-    if(flag_ballSpeed){
-        if(lastBallSpeed - lastBallSense < MAX_BALL_SPEED){
-            //calcualate the speed. Sensors are 8.5cm apart
-            float speed = 85/float(lastBallSpeed - lastBallSense);
-            controlPanel.showSpeed(speed);
-        }else{
-            //this is probably the sweep blocking the speed sensor
-        }
-        flag_ballSpeed = false;
     }
 
     if(flag_homeSense){
@@ -305,18 +195,14 @@ void setup() {
     while(!Serial);
 
     setupPins();
-    
-    controlPanel.begin();
+
     Wire.begin();    
     delay(20);  
     
     //check if the pinsetter is connected (try its I2C address)
     Wire.beginTransmission(PCA9685_ADDRESS);
     uint8_t error = Wire.endTransmission();
-    if(error == 2){
-        controlPanel.notConnected();
-        while(true);
-    }
+    if(error == 2)while(true);
 
     setupInterrupts();
     setupTimer();  
@@ -326,57 +212,23 @@ void setup() {
     servos.begin();
     servos.setPWMFreq(SERVO_PWM_FREQUENCY);
     delay(10);
-
-    sensorArray.begin();
+    
     resetPinsetter();
 }
 
 void loop() {       
     handleFlags();
     Pinsetter::pinsetterStatus machineStatus = pinsetter.getStatus();
-    bool result;//control panel functions return true/false which show if the screen was actually updated. Will depend on current control panel screen/mode
-
-    if(machineStatus.motorRunning != motorRunning){
-        //send the current slot to the LCD display. This is worth doing always as it's cached if not actively on screen
-        result = controlPanel.showMotor(machineStatus.motorRunning );
-        motorRunning = machineStatus.motorRunning ;
-    }
-
-    if(machineStatus.turretSlot != currentTurretSlot){
-        //send the current slot to the LCD display. This is worth doing always as it's cached if not actively on screen
-        result = controlPanel.showSlot(machineStatus.turretSlot );
-        currentTurretSlot = machineStatus.turretSlot ;
-    }
-
-    if(machineStatus.deckLoaded != deckIsLoaded){
-        //send the current deck loaded true/false to the LCD display. This is worth doing always as it's cached if not actively on screen
-        result = controlPanel.showDeck(machineStatus.deckLoaded );
-        deckIsLoaded = machineStatus.deckLoaded ;
-    }     
     
     //check for change in pinsetter machine state
     if(machineStatus.operatingMode != machineState){                
         machineState = machineStatus.operatingMode;               
-        result = controlPanel.showPinsetterStatus(machineState);
 
         switch(machineState){
-            case Pinsetter::PinsetterPose::STARTMENU:
-                controlPanel.mainMenu();
-                controlPanel.clearPins();
-                break;
             case Pinsetter::PinsetterPose::READY:
-                if(machineStatus.throwOne){
-                    result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::BOWL1);   
-                }else{
-                    result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::BOWL2);
-                }
                 laneLighting.wipeGreen();
                 break;
-            case Pinsetter::PinsetterPose::WAITFORPINS:
-                result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::WAIT);
-                break;
             default:
-                result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::CYCLING);
                 break;
         }      
     }
