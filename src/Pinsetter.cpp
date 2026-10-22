@@ -289,9 +289,13 @@ void Pinsetter::heartbeat(){
            case PinsetterPose::DELAYCYCLE:
                //sets to the CYCLE state but with dealy. This adds a delay before the sweep moves from UP to GUARD
                delaySteps += 1;
-               if(delaySteps == CYCLE_DELAY) currentPose = PinsetterPose::CYCLE;          
+               if(delaySteps == CYCLE_DELAY) currentPose = PinsetterPose::GETPINS;          
                break;
-               
+      
+          case PinsetterPose::GETPINS:
+               //wait for score processing from main loop.               
+               break;
+
      }
 
      //if the turret is nearly full and the motor is running...
@@ -346,7 +350,8 @@ Pinsetter::pinsetterStatus Pinsetter::getStatus(){
      ret.deckLoaded = false;
      if(_turret.deckHasPins) ret.deckLoaded = true; 
      ret.turretSlot = _turret.currentSlot;
-     ret.operatingMode = currentPose;
+     ret.sequenceStep = currentPose;
+     ret.pinsetterMode = currentMode;
      ret.motorRunning = _mainMotor.currentPose == MainMotor::MainMotorPose::RUNNING;
      ret.throwOne = currentMode == Pinsetter::PinsetterMode::THROW_ONE;
      return ret;

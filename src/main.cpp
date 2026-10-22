@@ -353,8 +353,8 @@ void loop() {
     }     
     
     //check for change in pinsetter machine state
-    if(machineStatus.operatingMode != machineState){                
-        machineState = machineStatus.operatingMode;               
+    if(machineStatus.sequenceStep != machineState){                
+        machineState = machineStatus.sequenceStep;               
         result = controlPanel.showPinsetterStatus(machineState);
 
         switch(machineState){
@@ -373,6 +373,15 @@ void loop() {
             case Pinsetter::PinsetterPose::WAITFORPINS:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::WAIT);
                 break;
+            case Pinsetter::PinsetterPose::GETPINS:
+                //process the score here
+                //if all pins have been kocked down and we'r on throw 1, can advance straight to throw two
+                
+                
+            
+
+                pinsetter.doCycle(false);
+                break;                        
             default:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::CYCLING);
                 break;

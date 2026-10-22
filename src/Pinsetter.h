@@ -37,7 +37,8 @@ class Pinsetter{
             PINSREPLACING,
             PINSREPLACED,
             CYCLE,
-            DELAYCYCLE
+            DELAYCYCLE,
+            GETPINS
         };
         
         enum PinsetterMode{            
@@ -50,7 +51,8 @@ class Pinsetter{
         struct pinsetterStatus{
             bool deckLoaded;
             uint8_t turretSlot;
-            PinsetterPose operatingMode;
+            PinsetterPose sequenceStep;
+            PinsetterMode pinsetterMode;
             bool throwOne;
             bool motorRunning;
         };
@@ -61,6 +63,7 @@ class Pinsetter{
         void turretHomed();             //called by sensor interrupt from main program 
         void pinSense();                //called by sensor interrupt from main program
         bool doCycle(bool pause);       //trigger the pinsetter cycle. Set pause= true to include a delay.
+            
         void startMotor();           //restart the coneyor if stopped.      
         
         pinsetterStatus getStatus();    //returns a struct of current pinsetter status
