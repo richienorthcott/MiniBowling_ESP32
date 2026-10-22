@@ -102,7 +102,7 @@ bool ControlPanel::showMotor(bool motor){
     if(currentPose != ControlPanelPage::MAIN) return false;
     _lcd->setCursor(0, 0);
     if(motor){
-        _lcd->print("RUN"); 
+        _lcd->print("RUN  "); 
     }else{
          _lcd->print("PAUSE");
     }
