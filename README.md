@@ -94,6 +94,8 @@ All pinsetter functions are from the PWM outputs (up to 16 available on the PCA9
 
 > None of these are *strapping* pins, so no problems uploading code while connected!
 
+![image]("esp32.jpg")
+
 **GPIO 4** EN to stepper driver and PCA9685 PWM IC (active LOW)
 
 **GPIO 13** Pixel data OUT for addressable led strip
