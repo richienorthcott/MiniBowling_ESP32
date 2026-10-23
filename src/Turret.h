@@ -18,6 +18,7 @@ class Turret{
         TurretPose currentPose = STARTUP;
 
         void begin(FastAccelStepperEngine* engine);
+        void init();
         void heartbeat();
         
         void homeSense();                //Notify the turret the home sensor has been activated

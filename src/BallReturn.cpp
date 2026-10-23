@@ -19,6 +19,7 @@ void BallReturn::closeDoor(){
 }
 
 void BallReturn::armDoor(){
+    if(currentPose == BallReturnPose::OPEN) this->closeDoor();
     pulseCount = 0;
     isArmed = true;
 }

@@ -6,15 +6,17 @@ Pinsetter::Pinsetter(Adafruit_PWMServoDriver* servos):_deck(servos), _sweep(serv
 }
 
 void Pinsetter::begin(FastAccelStepperEngine* engine){
-     _engine = engine;
+     _turret.begin(engine);
+}
+
+void Pinsetter::init(){
      _deck.begin();
      _sweep.begin();
      _ballReturn.begin();
      _mainMotor.begin();
      _throwLEDs.begin();
      _deckLighting.begin();
-     _turret.begin(engine);
-
+     _turret.init();
      currentPose = PinsetterPose::INIT;
      currentMode = PinsetterMode::INITIALISING1;
 }
@@ -159,9 +161,8 @@ void Pinsetter::heartbeat(){
                          case PinsetterMode::INITIALISING2:
                               //initialisation is now complete
                               _throwLEDs.throwOne();
-                              _mainMotor.start();
                               _deckLighting.turnOn();
-                              //currentPose = PinsetterPose::STARTMENU;
+                              _mainMotor.start();
                               currentMode = PinsetterMode::THROW_ONE;     
                               currentPose = PinsetterPose::SWEEPUP;                                        
                               break;
@@ -289,11 +290,7 @@ void Pinsetter::heartbeat(){
            case PinsetterPose::DELAYCYCLE:
                //sets to the CYCLE state but with dealy. This adds a delay before the sweep moves from UP to GUARD
                delaySteps += 1;
-               if(delaySteps == CYCLE_DELAY) currentPose = PinsetterPose::GETPINS;          
-               break;
-      
-          case PinsetterPose::GETPINS:
-               //wait for score processing from main loop.               
+               if(delaySteps == CYCLE_DELAY) currentPose = PinsetterPose::CYCLE;          
                break;
 
      }

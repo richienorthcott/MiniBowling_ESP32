@@ -173,8 +173,9 @@ void setupPins(){
 }
 
 void resetPinsetter(){
-    pinsetter.begin(&engine);
+    pinsetter.init();
     controlPanel.mainMenu();
+    controlPanel.clearPins();
     laneLighting.lavaAnim();
 }
 
@@ -321,6 +322,8 @@ void setup() {
     delay(10);
     sensorArray.begin();
     delay(3000);
+    
+    pinsetter.begin(&engine);
     resetPinsetter();
 }
 
@@ -351,6 +354,11 @@ void loop() {
     if(machineStatus.sequenceStep != machineState){                
         machineState = machineStatus.sequenceStep;               
         result = controlPanel.showPinsetterStatus(machineState);
+        
+        if(machineStatus.pinsetterMode == Pinsetter::PinsetterMode::INITIALISING1 || machineStatus.pinsetterMode == Pinsetter::PinsetterMode::INITIALISING2){
+            result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::INITIALISING);   
+            return;
+        } 
 
         switch(machineState){            
             case Pinsetter::PinsetterPose::READY:
@@ -363,12 +371,7 @@ void loop() {
                 break;
             case Pinsetter::PinsetterPose::WAITFORPINS:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::WAIT);
-                break;
-            case Pinsetter::PinsetterPose::GETPINS:
-                //process the score here
-                //if all pins have been kocked down and we'r on throw 1, can advance straight to throw two                    
-                pinsetter.doCycle(false);
-                break;                        
+                break;       
             default:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::CYCLING);
                 break;

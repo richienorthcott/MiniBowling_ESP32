@@ -16,7 +16,6 @@ class Pinsetter{
         
         enum PinsetterPose{
             INIT,
-            //STARTMENU,
             CLEARTURRET,
             SWEEPGUARDTOBACK,
             SWEEPBACKTOGUARD,    
@@ -37,8 +36,7 @@ class Pinsetter{
             PINSREPLACING,
             PINSREPLACED,
             CYCLE,
-            DELAYCYCLE,
-            GETPINS
+            DELAYCYCLE
         };
         
         enum PinsetterMode{            
@@ -58,6 +56,7 @@ class Pinsetter{
         };
 
         void begin(FastAccelStepperEngine* engine);                   //initialises the pinsetter
+        void init();
         void heartbeat();               //call periodically for sweep tweens etc. This is passed to other objects.
         
         void turretHomed();             //called by sensor interrupt from main program 
@@ -72,7 +71,6 @@ class Pinsetter{
         PinsetterPose currentPose = PinsetterPose::INIT;    
         PinsetterMode currentMode = PinsetterMode::INITIALISING1;
         Adafruit_PWMServoDriver* _servoInterface;
-        FastAccelStepperEngine* _engine;
         Deck _deck;
         Sweep _sweep;
         BallReturn _ballReturn;

@@ -99,13 +99,13 @@ bool ControlPanel::showMessage(ControlPanel::ControlPanelMessage msg){
             _lcd->print("Initialising    ");
             break;
         case ControlPanelMessage::BOWL1:
-            _lcd->print("Bowl first ball ");
+            _lcd->print("Bowl 1st ball   ");
             break;
         case ControlPanelMessage::BOWL2:
-            _lcd->print("Bowl second ball");
+            _lcd->print("Bowl 2nd ball   ");
             break;
         case ControlPanelMessage::CYCLING:
-            _lcd->print("Processing      ");
+            _lcd->print("Cycling         ");
             break;
         case ControlPanelMessage::WAIT:
             _lcd->print("Waiting for pins");
