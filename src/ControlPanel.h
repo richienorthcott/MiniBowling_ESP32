@@ -6,11 +6,35 @@
 #include <PinSensor.h>
 #include <Pinsetter.h>
 
+/*
+    MAIN
+    - Cycle
+    - Game
+    - Util
+        GAME
+        - Scroll
+        - Replay
+        - Setup
+            SETUP
+            - Player
+            - Frames
+            - Start
+        UTIL
+        - Light
+        - Motor
+        - Reset        
+            LIGHT
+            - f1
+            - f3
+*/
+
+
 class ControlPanel{
     public:
         ControlPanel(LiquidCrystal_I2C* lcd, HT16K33* ledMatrix);
         
         enum ControlPanelMessage{
+            INITIALISTING,
             WAIT,
             CYCLING,
             BOWL1,
@@ -21,9 +45,9 @@ class ControlPanel{
             INIT,
             MAIN,
             UTIL,
-            LIGHT,
-            SCORE,
-            GAME
+            LIGHT,            
+            GAME,
+            SETUP
         };
 
         ControlPanelPage currentPose = ControlPanelPage::INIT;
@@ -41,10 +65,12 @@ class ControlPanel{
 
         //these are all different overall menu 'modes'
         void notConnected();
-        void mainMenu();//root level
-        void utilMenu();//level 1
-        void lightMenu();//level 2
-        void scoreMenu();//level 2
+        void mainMenu();
+        void gameMenu();
+        void setupMenu();
+        void utilMenu();
+        void lightMenu();
+
     private:        
         void initMenu();
         LiquidCrystal_I2C* _lcd;

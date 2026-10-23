@@ -15,9 +15,8 @@ void ControlPanel::begin(){
 
 void ControlPanel::initMenu(){
     _lcd->clear();
-    _lcd->setCursor(0,0); _lcd->print("    MINI BOWLING    ");
-    _lcd->setCursor(0,1); _lcd->print("    ============    ");
-    _lcd->setCursor(0,2); _lcd->print("    Please wait...  ");
+    _lcd->setCursor(0, 1); _lcd->print("    MINI BOWLING    ");
+    _lcd->setCursor(0, 2); _lcd->print("    ============    ");
 }
 
 void ControlPanel::mainMenu(){
@@ -34,28 +33,39 @@ void ControlPanel::mainMenu(){
     result = this->showSlot(lastLoad);
     result = this->showDeck(lastDeck);
     result = this->showMotor(lastMotor);
-    _lcd->setCursor(0, 3);_lcd->print("cycle |motor |util  ");   
+    _lcd->setCursor(0, 3);_lcd->print("cycle | game | util ");   
 }
 
 void ControlPanel::utilMenu(){
     currentPose = ControlPanelPage::UTIL;
     _lcd->clear();
-    _lcd->setCursor(0, 0);_lcd->print("Utilities");
-    _lcd->setCursor(0, 3);_lcd->print("light |score |reset ");
+    _lcd->setCursor(0, 0);_lcd->print("UTIL");
+    _lcd->setCursor(0, 3);_lcd->print("light |motor | reset");
+}
+
+void ControlPanel::gameMenu(){
+    currentPose = ControlPanelPage::GAME;
+    _lcd->clear();        
+    _lcd->setCursor(0, 0);_lcd->print("2P GAME  frame:01/10");
+    _lcd->setCursor(0, 1);_lcd->print(">1:_---------  t:000");
+    _lcd->setCursor(0, 2);_lcd->print(" 2:----------  t:000");
+    _lcd->setCursor(0, 3);_lcd->print("scroll|replay| setup");
+}
+
+void ControlPanel::setupMenu(){
+    currentPose = ControlPanelPage::SETUP;
+    _lcd->clear();    
+    _lcd->setCursor(0, 0);_lcd->print("GAME SETUP");
+    _lcd->setCursor(0, 1);_lcd->print("Players:2");
+    _lcd->setCursor(0, 2);_lcd->print(" Frames:10");
+    _lcd->setCursor(0, 3);_lcd->print("player|frames| begin");
 }
 
 void ControlPanel::lightMenu(){
     currentPose = ControlPanelPage::LIGHT;
     _lcd->clear();
-    _lcd->setCursor(0, 0);_lcd->print("LED Lighting");
+    _lcd->setCursor(0, 0);_lcd->print("LIGHT");
     _lcd->setCursor(0, 3);_lcd->print("rainbo|strike|wipe  ");
-}
-
-void ControlPanel::scoreMenu(){
-    currentPose = ControlPanelPage::SCORE;
-    _lcd->clear();
-    _lcd->setCursor(0, 0);_lcd->print("Score Submit");
-    _lcd->setCursor(0, 3);_lcd->print("Zero  |Five  |Ten   ");
 }
 
 bool ControlPanel::showMessage(ControlPanel::ControlPanelMessage msg){
@@ -64,6 +74,9 @@ bool ControlPanel::showMessage(ControlPanel::ControlPanelMessage msg){
     _lcd->setCursor(0, 1);
     _lcd->print("msg:");
     switch(lastMessage){
+        case ControlPanelMessage::INITIALISTING:            
+            _lcd->print("Initialising   ");
+            break;
         case ControlPanelMessage::BOWL1:
             _lcd->print("Bowl first ball");
             break;

@@ -61,11 +61,9 @@ void Pinsetter::heartbeat(){
                if(_turret.currentPose == Turret::TurretPose::RECEIVEPINS) currentPose = PinsetterPose::THROWTWO;
                break;          
           
-          case PinsetterPose::STARTMENU:
+          //case PinsetterPose::STARTMENU:
                //provides a state the main loop can detect, to start the menu. This is at the end of the initialisation sequence
-               currentMode = PinsetterMode::THROW_ONE;     
-               currentPose = PinsetterPose::SWEEPUP;
-               break;
+          //     break;
           
           case PinsetterPose::CLEARTURRET:
                //after a delay (allows time for full rotation to slot 10, dropping the pins), return the turret to slot 0
@@ -163,7 +161,9 @@ void Pinsetter::heartbeat(){
                               _throwLEDs.throwOne();
                               _mainMotor.start();
                               _deckLighting.turnOn();
-                              currentPose = PinsetterPose::STARTMENU;
+                              //currentPose = PinsetterPose::STARTMENU;
+                              currentMode = PinsetterMode::THROW_ONE;     
+                              currentPose = PinsetterPose::SWEEPUP;                                        
                               break;
                          case PinsetterMode::THROW_ONE:
                               currentMode = THROW_TWO;
@@ -338,9 +338,14 @@ bool Pinsetter::doCycle(bool pause){
      return false; //current pinsetter state is not READY, don't do anything!
 }
 
-void Pinsetter::startMotor(){
+bool Pinsetter::startMotor(){
      //relays motor start request to the motor child object
-     _mainMotor.start();
+     //don't start motor if initialising
+     if (currentMode == Pinsetter::PinsetterMode::THROW_ONE ||currentMode == Pinsetter::PinsetterMode::THROW_TWO){
+          _mainMotor.start();
+          return true;
+     }
+     return false;
 }
 
 Pinsetter::pinsetterStatus Pinsetter::getStatus(){

@@ -19,7 +19,7 @@ Adafruit_PWMServoDriver servos(PCA9685_ADDRESS);
 LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLS, LCD_ROWS);
 HT16K33 ledmatrixdriver;
 CRGB lane_leds[LANE_PIXEL_COUNT];
-FastAccelStepperEngine engine = FastAccelStepperEngine();
+FastAccelStepperEngine fas_engine = FastAccelStepperEngine();
 
 Pinsetter pinsetter(&servos);
 LaneLighting laneLighting(lane_leds);
@@ -36,7 +36,7 @@ volatile bool toggleReset = false;
 uint8_t currentTurretSlot = 0;
 bool deckIsLoaded = false;
 bool motorRunning = false;
-ControlPanel::ControlPanelPage currentPage = ControlPanel::ControlPanelPage::INIT;
+//ControlPanel::ControlPanelPage currentPage = ControlPanel::ControlPanelPage::INIT;
 
 void ARDUINO_ISR_ATTR onTimer() {
     flag_updateHeartbeat = true;
@@ -173,8 +173,9 @@ void setupPins(){
 }
 
 void resetPinsetter(){
-    pinsetter.begin(&engine);
-    controlPanel.begin();
+    pinsetter.begin(&fas_engine);
+    controlPanel.mainMenu();
+    bool restult = controlPanel.showMessage(ControlPanel::ControlPanelMessage::INITIALISTING);
     laneLighting.lavaAnim();
 }
 
@@ -197,8 +198,7 @@ void handleFlags(){
     }
 
     if(flag_btn_select1){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
+        switch(controlPanel.currentPose){
             case ControlPanel::ControlPanelPage::MAIN:
                 if(pinsetter.doCycle(false)){
                     controlPanel.showSpeed(0);
@@ -208,66 +208,59 @@ void handleFlags(){
             case ControlPanel::ControlPanelPage::UTIL:
                 controlPanel.lightMenu();
                 break;
-            case ControlPanel::ControlPanelPage::LIGHT:
+            case ControlPanel::ControlPanelPage::LIGHT:                
                 laneLighting.rainbowAnim();
                 break;
-            case ControlPanel::ControlPanelPage::SCORE:
+            case ControlPanel::ControlPanelPage::GAME:                
+                break;
+            case ControlPanel::ControlPanelPage::SETUP:                
                 break;
             }
         flag_btn_select1 = false;
     }
 
     if(flag_btn_select2){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
+        switch(controlPanel.currentPose){            
             case ControlPanel::ControlPanelPage::MAIN:
-                pinsetter.startMotor();
+                controlPanel.gameMenu();
                 break;
-            case ControlPanel::ControlPanelPage::UTIL:
-                controlPanel.scoreMenu();
+            case ControlPanel::ControlPanelPage::UTIL:    
+                if (pinsetter.startMotor()) controlPanel.mainMenu();
                 break;
-            case ControlPanel::ControlPanelPage::LIGHT:
+            case ControlPanel::ControlPanelPage::LIGHT:                
                 laneLighting.strike();
                 break;
-            case ControlPanel::ControlPanelPage::SCORE:
+            case ControlPanel::ControlPanelPage::GAME:                
                 break;
-            
-        }
-        flag_btn_select2 = false;
+            case ControlPanel::ControlPanelPage::SETUP:                
+                break;
+            }
+        flag_btn_select2 = false;        
     }
-
+     
     if(flag_btn_select3){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
-                case ControlPanel::ControlPanelPage::MAIN:
+        switch(controlPanel.currentPose){
+            case ControlPanel::ControlPanelPage::MAIN:
                 controlPanel.utilMenu();
                 break;
             case ControlPanel::ControlPanelPage::UTIL:
                 resetPinsetter();
                 break;
-            case ControlPanel::ControlPanelPage::LIGHT:
-                laneLighting.wipeGreen();
+            case ControlPanel::ControlPanelPage::LIGHT:                
+                laneLighting.wipeGreen();    
                 break;
-            case ControlPanel::ControlPanelPage::SCORE:
+            case ControlPanel::ControlPanelPage::GAME:                
+                controlPanel.setupMenu();
                 break;
-        }
+            case ControlPanel::ControlPanelPage::SETUP:                
+                controlPanel.gameMenu();    
+                break;
+            }
         flag_btn_select3 = false;
     }
 
     if(flag_btn_home){
-        currentPage = controlPanel.currentPose;
-        switch(currentPage){
-            case ControlPanel::ControlPanelPage::UTIL:
-                controlPanel.mainMenu();
-                break;
-            case ControlPanel::ControlPanelPage::LIGHT:
-                controlPanel.utilMenu();
-                break;
-            case ControlPanel::ControlPanelPage::SCORE:
-                controlPanel.utilMenu();
-                break;
-                
-        }
+        if (controlPanel.currentPose != ControlPanel::ControlPanelPage::MAIN) controlPanel.mainMenu();        
         flag_btn_home = false;
     }
 
@@ -299,15 +292,17 @@ void handleFlags(){
 }
 
 void setup() {    
+    setupPins();        
+    setupInterrupts();
+    setupTimer();  
+
     Serial.begin(SERIAL_BAUD); //init serial comms
     while(!Serial);
 
-    setupPins();
-    
-    controlPanel.begin();
     Wire.begin();    
     delay(20);  
     
+    controlPanel.begin();
     //check if the pinsetter is connected (try its I2C address)
     Wire.beginTransmission(PCA9685_ADDRESS);
     uint8_t error = Wire.endTransmission();
@@ -316,18 +311,18 @@ void setup() {
         while(true);
     }
 
-    setupInterrupts();
-    setupTimer();  
-  
-    engine.init();
+    fas_engine.init();
+    sensorArray.begin();
 
     servos.begin();
     servos.setPWMFreq(SERVO_PWM_FREQUENCY);
-    delay(10);
-
-    sensorArray.begin();
+    
+    delay(3000);
+    
     resetPinsetter();
+    bool result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::INITIALISTING);
 }
+
 
 void loop() {       
     handleFlags();
@@ -357,11 +352,7 @@ void loop() {
         machineState = machineStatus.sequenceStep;               
         result = controlPanel.showPinsetterStatus(machineState);
 
-        switch(machineState){
-            case Pinsetter::PinsetterPose::STARTMENU:
-                controlPanel.mainMenu();
-                controlPanel.clearPins();
-                break;
+        switch(machineState){            
             case Pinsetter::PinsetterPose::READY:
                 if(machineStatus.throwOne){
                     result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::BOWL1);   
@@ -375,11 +366,7 @@ void loop() {
                 break;
             case Pinsetter::PinsetterPose::GETPINS:
                 //process the score here
-                //if all pins have been kocked down and we'r on throw 1, can advance straight to throw two
-                
-                
-            
-
+                //if all pins have been kocked down and we'r on throw 1, can advance straight to throw two                    
                 pinsetter.doCycle(false);
                 break;                        
             default:
