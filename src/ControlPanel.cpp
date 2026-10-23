@@ -1,6 +1,6 @@
 #include <ControlPanel.h>
 
-ControlPanel::ControlPanel(LiquidCrystal_I2C* lcd, HT16K33* ledMatrix):_pindicator(ledMatrix){
+ControlPanel::ControlPanel(LiquidCrystal_I2C* lcd, HT16K33* ledMatrix):_pindicator(ledMatrix),_game(lcd){
     _lcd = lcd;
     _ledMatrix = ledMatrix;
 }
@@ -15,8 +15,9 @@ void ControlPanel::begin(){
 
 void ControlPanel::initMenu(){
     _lcd->clear();
-    _lcd->setCursor(0, 1); _lcd->print("    MINI BOWLING    ");
-    _lcd->setCursor(0, 2); _lcd->print("    ============    ");
+    _lcd->setCursor(0, 0); _lcd->print("    MINI BOWLING    ");
+    _lcd->setCursor(0, 1); _lcd->print("    ============    ");
+    _lcd->setCursor(0, 3); _lcd->print("               v1.23");
 }
 
 void ControlPanel::mainMenu(){
@@ -39,25 +40,45 @@ void ControlPanel::mainMenu(){
 void ControlPanel::utilMenu(){
     currentPose = ControlPanelPage::UTIL;
     _lcd->clear();
-    _lcd->setCursor(0, 0);_lcd->print("UTIL");
+    _lcd->setCursor(0, 0);_lcd->print("PINSETTER UTILITIES");
     _lcd->setCursor(0, 3);_lcd->print("light |motor | reset");
 }
 
 void ControlPanel::gameMenu(){
     currentPose = ControlPanelPage::GAME;
     _lcd->clear();        
-    _lcd->setCursor(0, 0);_lcd->print("2P GAME  frame:01/10");
-    _lcd->setCursor(0, 1);_lcd->print(">1:_---------  t:000");
-    _lcd->setCursor(0, 2);_lcd->print(" 2:----------  t:000");
-    _lcd->setCursor(0, 3);_lcd->print("scroll|replay| setup");
-}
+    _lcd->setCursor(0, 0);
+    
+    _lcd->print(_game.numPlayers + 1);
+    _lcd->print("P GAME  frame:--/--");    
+    switch(_game.currentPose){
+        case Game::GamePose::INIT:            
+            _lcd->setCursor(0, 1); _lcd->print(" Please set up game ");            
+            _lcd->setCursor(0, 2); _lcd->print("                    ");                    
+             _lcd->setCursor(0, 3);_lcd->print("      |      | setup");
+   
+            break;
+        default:            
+            _lcd->setCursor(0, 3);_lcd->print("scroll|rebowl| setup");    
+            _game.printScore();            
+            break;
+        }
+} 
 
 void ControlPanel::setupMenu(){
     currentPose = ControlPanelPage::SETUP;
     _lcd->clear();    
     _lcd->setCursor(0, 0);_lcd->print("GAME SETUP");
-    _lcd->setCursor(0, 1);_lcd->print("Players:2");
-    _lcd->setCursor(0, 2);_lcd->print(" Frames:10");
+    
+    _lcd->setCursor(0, 1);
+    _lcd->print("     #Players:");
+    _lcd->print(_game.numPlayers + 1);
+    
+    _lcd->setCursor(0, 2);
+    _lcd->print("      #Frames:");
+    _lcd->print(_game.numFrames + 1);
+    _lcd->print(" ");
+    
     _lcd->setCursor(0, 3);_lcd->print("player|frames| begin");
 }
 
@@ -74,11 +95,11 @@ bool ControlPanel::showMessage(ControlPanel::ControlPanelMessage msg){
     _lcd->setCursor(0, 1);
     _lcd->print("msg:");
     switch(lastMessage){
-        case ControlPanelMessage::INITIALISTING:            
-            _lcd->print("Initialising   ");
+        case ControlPanelMessage::INITIALISING:    
+            _lcd->print("Initialising    ");
             break;
         case ControlPanelMessage::BOWL1:
-            _lcd->print("Bowl first ball");
+            _lcd->print("Bowl first ball ");
             break;
         case ControlPanelMessage::BOWL2:
             _lcd->print("Bowl second ball");
@@ -160,4 +181,30 @@ void ControlPanel::notConnected(){
     _lcd->setCursor(0,0);_lcd->print("Pinsetter not found!");
     _lcd->setCursor(0,2);_lcd->print("DO NOT CONNECT WHILE");
     _lcd->setCursor(0,3);_lcd->print("POWERED!!!");
+}
+
+bool ControlPanel::updatePlayerCount(){
+    if(currentPose != ControlPanelPage::SETUP) return false;
+    _game.changePlayerCount();
+    return true;
+}
+
+bool ControlPanel::updateFrameCount(){
+    if(currentPose != ControlPanelPage::SETUP) return  false;
+    _game.changeFrameCount();
+    return true;
+}
+
+bool ControlPanel::initGame(){
+    if(currentPose != ControlPanelPage::SETUP) return false;
+    _game.init();
+    this->gameMenu();
+    return true;
+}
+
+bool ControlPanel::scrollGame(){
+    if(currentPose != ControlPanelPage::GAME) return false;
+    if(_game.currentPose != Game::GamePose::RUNNING) return false;
+    _game.scroll();
+    return true;
 }

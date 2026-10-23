@@ -1,10 +1,10 @@
 #pragma once
 #include <LiquidCrystal_I2C.h>
 #include <ht16k33.h>
-#include <Globals.h>
 #include <Pindicator.h>
 #include <PinSensor.h>
 #include <Pinsetter.h>
+#include <Game.h>
 
 /*
     MAIN
@@ -34,7 +34,7 @@ class ControlPanel{
         ControlPanel(LiquidCrystal_I2C* lcd, HT16K33* ledMatrix);
         
         enum ControlPanelMessage{
-            INITIALISTING,
+            INITIALISING,
             WAIT,
             CYCLING,
             BOWL1,
@@ -71,6 +71,11 @@ class ControlPanel{
         void utilMenu();
         void lightMenu();
 
+        bool updatePlayerCount();
+        bool updateFrameCount();
+        bool initGame();
+        bool scrollGame();
+
     private:        
         void initMenu();
         LiquidCrystal_I2C* _lcd;
@@ -84,4 +89,6 @@ class ControlPanel{
         Pinsetter::PinsetterPose lastStatus = Pinsetter::PinsetterPose::INIT;
         bool lastDeck = false;
         bool lastMotor = false;
+        Game _game;
+        
 };

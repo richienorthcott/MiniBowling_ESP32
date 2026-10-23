@@ -78,7 +78,7 @@
 
 #define MAX_PWM 4095
 
-#define DEBOUNCE_MS 200 //milliseconds
+#define DEBOUNCE_MS 300 //milliseconds
 #define SENSOR_DEBOUNCE_MS 600 //milliseconds
 
 #define CONVEYOR_TIMEOUT_MS 30000 //milliseconds

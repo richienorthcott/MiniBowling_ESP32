@@ -346,6 +346,7 @@ bool Pinsetter::startMotor(){
           return true;
      }
      return false;
+
 }
 
 Pinsetter::pinsetterStatus Pinsetter::getStatus(){

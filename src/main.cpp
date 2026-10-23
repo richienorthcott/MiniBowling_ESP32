@@ -19,7 +19,7 @@ Adafruit_PWMServoDriver servos(PCA9685_ADDRESS);
 LiquidCrystal_I2C lcd(LCD_ADDRESS, LCD_COLS, LCD_ROWS);
 HT16K33 ledmatrixdriver;
 CRGB lane_leds[LANE_PIXEL_COUNT];
-FastAccelStepperEngine fas_engine = FastAccelStepperEngine();
+FastAccelStepperEngine engine = FastAccelStepperEngine();
 
 Pinsetter pinsetter(&servos);
 LaneLighting laneLighting(lane_leds);
@@ -173,9 +173,8 @@ void setupPins(){
 }
 
 void resetPinsetter(){
-    pinsetter.begin(&fas_engine);
+    pinsetter.begin(&engine);
     controlPanel.mainMenu();
-    bool restult = controlPanel.showMessage(ControlPanel::ControlPanelMessage::INITIALISTING);
     laneLighting.lavaAnim();
 }
 
@@ -211,9 +210,11 @@ void handleFlags(){
             case ControlPanel::ControlPanelPage::LIGHT:                
                 laneLighting.rainbowAnim();
                 break;
-            case ControlPanel::ControlPanelPage::GAME:                
+            case ControlPanel::ControlPanelPage::GAME:                                
+                controlPanel.scrollGame();    
                 break;
             case ControlPanel::ControlPanelPage::SETUP:                
+                controlPanel.updatePlayerCount();
                 break;
             }
         flag_btn_select1 = false;
@@ -233,6 +234,7 @@ void handleFlags(){
             case ControlPanel::ControlPanelPage::GAME:                
                 break;
             case ControlPanel::ControlPanelPage::SETUP:                
+                controlPanel.updateFrameCount();
                 break;
             }
         flag_btn_select2 = false;        
@@ -253,7 +255,7 @@ void handleFlags(){
                 controlPanel.setupMenu();
                 break;
             case ControlPanel::ControlPanelPage::SETUP:                
-                controlPanel.gameMenu();    
+                controlPanel.initGame();//start a new game                ;    
                 break;
             }
         flag_btn_select3 = false;
@@ -292,17 +294,15 @@ void handleFlags(){
 }
 
 void setup() {    
-    setupPins();        
-    setupInterrupts();
-    setupTimer();  
-
     Serial.begin(SERIAL_BAUD); //init serial comms
     while(!Serial);
 
+    setupPins();
+    
+    controlPanel.begin();
     Wire.begin();    
     delay(20);  
     
-    controlPanel.begin();
     //check if the pinsetter is connected (try its I2C address)
     Wire.beginTransmission(PCA9685_ADDRESS);
     uint8_t error = Wire.endTransmission();
@@ -311,18 +311,18 @@ void setup() {
         while(true);
     }
 
-    fas_engine.init();
-    sensorArray.begin();
+    setupInterrupts();
+    setupTimer();  
+  
+    engine.init();
 
     servos.begin();
     servos.setPWMFreq(SERVO_PWM_FREQUENCY);
-    
+    delay(10);
+    sensorArray.begin();
     delay(3000);
-    
     resetPinsetter();
-    bool result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::INITIALISTING);
 }
-
 
 void loop() {       
     handleFlags();
