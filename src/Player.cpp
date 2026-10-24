@@ -26,12 +26,15 @@ Player::ScoreType Player::setScore(uint8_t frame, bool throw1, uint8_t score){
         if (_type[frame] ==  ScoreType::STRIKE) return _type[frame];
         
         //this is throw 2
-        if(_throw[0][frame] + score > 10){
+        if(_throw[0][frame] + score >= 10){
+            //total of two throws can never be more than 10
             _throw[1][frame] = 10 - _throw[0][frame];        
+            _type[frame] = ScoreType::SPARE;
         }else{
+            //total of throws 1 and 2 is less than 10
             _throw[1][frame] = score;
+            _type[frame] = ScoreType::OPEN;
         }        
-        if(score + _throw[0][frame] == 10) _type[frame] = ScoreType::SPARE;        
     }
     return _type[frame];
 }
