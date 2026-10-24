@@ -48,6 +48,7 @@ void LaneLighting::wipeGreen(){
 
 void LaneLighting::strike(){
     chaseIndex = 0;
+    timeout = 0;
     fill_solid(leds, LANE_PIXEL_COUNT, CRGB::Black);
     FastLED.show();
     FastLED.setBrightness(LANE_PIXELS_INTENSITY2);
@@ -117,6 +118,12 @@ void LaneLighting::heartbeat(){
             chaseIndex += 1 ;
             //show the effect every 2 frames
             if(chaseIndex==2)chaseIndex=0;
+            timeout +=1;
+            if(timeout == 120){
+                FastLED.setBrightness(LANE_PIXELS_INTENSITY1);
+                solidRed();
+            }
+            
             break;
         }
 }

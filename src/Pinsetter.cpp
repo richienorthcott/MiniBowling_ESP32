@@ -349,9 +349,14 @@ bool Pinsetter::doCycle(bool pause){
      return false; //current pinsetter state is not READY, don't do anything!
 }
 
-bool Pinsetter::continuefromThrowOne(){
+bool Pinsetter::continuefromThrowOne(bool isStrike){
      if(currentPose == Pinsetter::PinsetterPose::READPINSDROPPED){
-          currentPose = Pinsetter::PinsetterPose::RAISEDECK;
+          if(isStrike){
+               currentMode = PinsetterMode::THROW_TWO;
+               currentPose = Pinsetter::PinsetterPose::SWEEPGUARDTOBACK;
+          }else{
+               currentPose = Pinsetter::PinsetterPose::RAISEDECK;
+          }
           return true;
      }
      return false;
@@ -364,8 +369,6 @@ bool Pinsetter::continuefromThrowTwo(){
      }
      return false;
 }
-
-
 
 bool Pinsetter::startMotor(){
      //relays motor start request to the motor child object

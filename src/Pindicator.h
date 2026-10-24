@@ -9,7 +9,8 @@ class Pindicator{
         
         void showPinStatus(uint16_t pinStatus);
         void showAll();
-        void clear();        
+        void clear();
+        uint8_t randomPins();        
     private:        
         HT16K33* _matrixDriver;
 };

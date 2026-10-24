@@ -11,11 +11,10 @@ void Player::init(){
         this->setScore(i, false, 0);            
         _type[i] = Player::ScoreType::NEW;   
     }        
+    extraThrows = 0;    
 }
 
 Player::ScoreType Player::setScore(uint8_t frame, bool throw1, uint8_t score){
-
-    
     if(throw1){
         _throw[0][frame] = score;
         if(score == 10){
@@ -24,6 +23,8 @@ Player::ScoreType Player::setScore(uint8_t frame, bool throw1, uint8_t score){
             _type[frame] = ScoreType::OPEN;
         }
     }else{
+        if (_type[frame] ==  ScoreType::STRIKE) return _type[frame];
+        
         //this is throw 2
         if(_throw[0][frame] + score > 10){
             _throw[1][frame] = 10 - _throw[0][frame];        
@@ -42,10 +43,10 @@ Player::FrameScore Player::getScore(uint8_t frame){
     return ret;
 }
 
-int Player::getTotal(){
+int Player::getTotal(uint8_t frames){
     int retTotal = 0;
     
-    for(uint8_t i=0;i<10;i++){
+    for(uint8_t i=0; i<frames; i++){
         retTotal += _throw[0][i] + _throw[1][i];
         switch(_type[i]){
             case ScoreType::SPARE:
@@ -64,5 +65,11 @@ int Player::getTotal(){
                 break;
         }
     }
+    //this is the 10th frame
+    retTotal += _throw[0][frames] + _throw[1][frames];
+    
+    //add on the two possible bonus frames
+    retTotal += _throw[0][frames+1];    
+    retTotal += _throw[0][frames+2];    
     return retTotal;
 }

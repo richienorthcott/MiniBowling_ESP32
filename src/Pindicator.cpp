@@ -32,3 +32,61 @@ void Pindicator::showPinStatus(uint16_t pinStatus){
 void Pindicator::clear(){
     _matrixDriver->clearAll();
 };
+
+uint8_t Pindicator::randomPins(){
+    uint8_t score = 0;
+    uint16_t status = 0;
+
+    if(random(2)){
+        score +=1;
+        status += 1;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 2;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 4;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 8;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 16;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 32;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 64;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 128;
+    }
+
+    if(random(2)){
+        score +=1;
+        status += 256;
+    }
+
+    if(random(2)){
+        score +=1;
+        status +=512;
+    }
+    showPinStatus(status);
+    return score;
+
+}

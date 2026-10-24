@@ -1,0 +1,55 @@
+#include <Globals.h>
+#include <Game.h>
+
+Game myGame;
+
+void setup(){
+    Serial.begin(115200);        
+    
+    myGame.changePlayerCount(2);
+    myGame.init();    
+    
+    myGame.printScore();
+}
+
+void loop(){
+    if(myGame.currentPose == Game::GamePose::RUNNING){            
+        
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));         
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 0)); 
+        Serial.print(myGame.submitScore(false, 0));
+
+        Serial.print(myGame.submitScore(true, 6)); 
+        Serial.print(myGame.submitScore(false, 4)); 
+
+        Serial.print(myGame.submitScore(true, 1));         
+        //Serial.print(myGame.submitScore(false, 0));
+
+        
+        myGame.printScore();    
+        
+    }    
+}

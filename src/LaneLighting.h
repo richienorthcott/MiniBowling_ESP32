@@ -35,5 +35,6 @@ class LaneLighting{
     private:                
         CRGB* leds;
         LIGHTINGMODE _currentMode = LIGHTINGMODE::NORMAL;
-        uint8_t chaseIndex = 0;        
+        uint8_t chaseIndex = 0;
+        uint8_t timeout= 0;        
     };

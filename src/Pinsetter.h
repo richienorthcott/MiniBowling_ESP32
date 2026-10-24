@@ -68,7 +68,7 @@ class Pinsetter{
         bool startMotor();           //restart the coneyor if stopped.      
         
         //callbacks for scoring and pin status display
-        bool continuefromThrowOne();
+        bool continuefromThrowOne(bool isStrike);
         bool continuefromThrowTwo();
 
         pinsetterStatus getStatus();    //returns a struct of current pinsetter status

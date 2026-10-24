@@ -37,6 +37,9 @@ bool deckIsLoaded = false;
 bool motorRunning = false;
 //ControlPanel::ControlPanelPage currentPage = ControlPanel::ControlPanelPage::INIT;
 
+bool one = true;
+
+
 void ARDUINO_ISR_ATTR onTimer() {
     flag_updateHeartbeat = true;
 }
@@ -231,8 +234,22 @@ void handleFlags(){
             case ControlPanel::ControlPanelPage::LIGHT:                
                 laneLighting.strike();
                 break;
-            case ControlPanel::ControlPanelPage::GAME:                
+            
+            case ControlPanel::ControlPanelPage::GAME:                                        
+                Player::ScoreType result;
+                if(one){
+                    result = controlPanel.submitPins(8 + random(3), true);                        
+                    if (result == Player::ScoreType::EXTRAOPEN  || result == Player::ScoreType::STRIKE){
+                        one = true;
+                    }else{
+                        one = false;
+                    }
+                }else{
+                    result = controlPanel.submitPins(0, false);
+                    one = true;
+                }
                 break;
+            
             case ControlPanel::ControlPanelPage::SETUP:                
                 controlPanel.updateFrameCount();
                 break;
@@ -330,6 +347,8 @@ void setup() {
 }
 
 void loop() {       
+
+    
     handleFlags();
     Pinsetter::pinsetterStatus machineStatus = pinsetter.getStatus();
     bool result;//control panel functions return true/false which show if the screen was actually updated. Will depend on current control panel screen/mode
@@ -358,24 +377,28 @@ void loop() {
         result = controlPanel.showPinsetterStatus(machineState);
         
         uint8_t score;
+        Player::ScoreType frameResult; 
+
         switch(machineState){            
             case Pinsetter::PinsetterPose::SWEEPUP:                
                 //show current pin status on pindicator
                 //score will normally be 10. Don't do anything with it here.
-                score = scoring.displayPins();            
+                score = scoring.randomPins();       
                 break;                        
             
             case Pinsetter::PinsetterPose::READPINSDROPPED:
                 //called after throw 1    
-                score = scoring.displayPins();
-                result = controlPanel.submitPins(6, true);
-                result = pinsetter.continuefromThrowOne();                
+                score = scoring.randomPins();
+        
+                frameResult = controlPanel.submitPins(score, true);
+                result = pinsetter.continuefromThrowOne(frameResult == Player::ScoreType::STRIKE);
+                if(frameResult == Player::ScoreType::STRIKE) laneLighting.strike();           
                 break;
             
             case Pinsetter::PinsetterPose::READTHROWTWO:
                 //called after throw 2
-                score = scoring.displayPins();
-                result = controlPanel.submitPins(3, false);
+                score = scoring.randomPins();
+                result = controlPanel.submitPins(score, false);
                 result = pinsetter.continuefromThrowTwo();
                 break;
         }

@@ -40,7 +40,7 @@ class ControlPanel{
         bool showDeck(bool loaded);                                   //prints whether the deck is full or empty. Returns false if not in MAIN mode
         bool showMotor(bool motor);                                   //prints the state of the main motor. Returns false if not in MAIN mode
 
-        bool submitPins(uint8_t score, bool isThrowOne);                
+        Player::ScoreType submitPins(uint8_t score, bool isThrowOne);                
 
         //these are all different overall menu 'modes'
         void notConnected();

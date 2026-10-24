@@ -194,20 +194,15 @@ bool ControlPanel::initGame(){
 
 bool ControlPanel::scrollGame(){
     if(currentPose != ControlPanelPage::GAME) return false;
-    if(_game.currentPose != Game::GamePose::RUNNING) return false;
+    //if(_game.currentPose != Game::GamePose::RUNNING) return false;
     _game.scroll();
     return true;
 }
 
-bool ControlPanel::submitPins(uint8_t score, bool isThrowOne){
-    //only submit the score if active game is running
-    if(_game.currentPose == Game::GamePose::RUNNING){
-        _game.submitScore(isThrowOne, score);
-        
-        if (currentPose == ControlPanel::ControlPanelPage::GAME) _game.printScore();
-        
-        return true;
-    }else{
-        return false;
-    } 
+Player::ScoreType ControlPanel::submitPins(uint8_t score, bool isThrowOne){
+    Player::ScoreType ret;
+    ret = _game.submitScore(isThrowOne, score);        
+    if (currentPose == ControlPanel::ControlPanelPage::GAME) _game.printScore();        
+    
+    return ret;    
 }

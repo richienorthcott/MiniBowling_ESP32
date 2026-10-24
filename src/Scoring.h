@@ -9,6 +9,7 @@ class Scoring{
         Scoring(PCF8575* sensors, HT16K33* matrix);    
         void begin();                
         uint8_t displayPins();  //lights up pin LEDs and returns score
+        uint8_t randomPins();
         void clearPins();       //clears all LEDs
         
     private:        
