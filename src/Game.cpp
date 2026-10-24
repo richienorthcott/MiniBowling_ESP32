@@ -16,6 +16,14 @@ void Game::init(){
 }
 
 void Game::printScore(){
+    
+    Serial.print("score:");
+    Serial.print(currentPlayer);
+    Serial.print(",");
+    Serial.print(displayPlayer);
+    Serial.println();
+    
+
     //update the frame counter
     _lcd->setCursor(15,0);
     

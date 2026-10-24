@@ -141,11 +141,24 @@ void Pinsetter::heartbeat(){
                delaySteps += 1;
                if(delaySteps == PIN_RELEASE){
                     _deck.setPosition(Deck::DeckPose::UP);
-                    currentPose = PinsetterPose::RAISEDECK;
+                    switch (currentMode){
+                         case PinsetterMode::THROW_ONE:
+                              //head over to the main loop to read the status of the pins
+                              currentPose = PinsetterPose::READPINSDROPPED;
+                              break;
+                         default:
+                              //we're on throw two, this is a cycle reset
+                              currentPose = PinsetterPose::RAISEDECK;     
+                              break;                    
+                    }                     
                     delaySteps = 0;
                }
                break;
-
+          
+          case PinsetterPose::READPINSDROPPED:
+               //read pin status from main loop. Next step will be RAISEDECK
+               break;
+          
           case PinsetterPose::RAISEDECK:
                //move the slide to the RECEIVE position, decide what to do next
                delaySteps += 1;
@@ -186,16 +199,18 @@ void Pinsetter::heartbeat(){
                //tween the sweep to GUARD position
                if(!_sweep.isAnimating){
                     _sweep.moveTo(Sweep::SweepPose::GUARD, _deck.currentPose, TWEEN_FRAMES * 2);
-                    currentPose = SWEEPGUARDTOBACK;
+                    currentPose = READTHROWTWO;
                }
                break;
 
+          case PinsetterPose::READTHROWTWO:
+               //read pin status from main loop. Next state is SWEEPGUARDTOBACK
+               break;
+
           case PinsetterPose::SWEEPUP:
-               //tween the sweep from its current position to the UP position
-               if(!_sweep.isAnimating){
-                    _sweep.moveTo(Sweep::SweepPose::UP, _deck.currentPose, TWEEN_FRAMES);
-                    currentPose = NEARLYREADY;
-               }
+               //tween the sweep from its current position to the UP position       
+               _sweep.moveTo(Sweep::SweepPose::UP, _deck.currentPose, TWEEN_FRAMES);
+               currentPose = NEARLYREADY;       
                break;
           
           case PinsetterPose::NEARLYREADY:
@@ -333,6 +348,24 @@ bool Pinsetter::doCycle(bool pause){
      }
      return false; //current pinsetter state is not READY, don't do anything!
 }
+
+bool Pinsetter::continuefromThrowOne(){
+     if(currentPose == Pinsetter::PinsetterPose::READPINSDROPPED){
+          currentPose = Pinsetter::PinsetterPose::RAISEDECK;
+          return true;
+     }
+     return false;
+}
+
+bool Pinsetter::continuefromThrowTwo(){
+     if(currentPose == Pinsetter::PinsetterPose::READTHROWTWO){
+          currentPose = Pinsetter::PinsetterPose::SWEEPGUARDTOBACK;
+          return true;
+     }
+     return false;
+}
+
+
 
 bool Pinsetter::startMotor(){
      //relays motor start request to the motor child object

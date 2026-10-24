@@ -7,6 +7,11 @@ void Scoring::begin(){
     pindicator.begin();
 }
 
-void Scoring::heartbeat(){
-    pindicator.heartbeat();
+uint8_t Scoring::displayPins(){
+    pindicator.showAll();
+    return 10;
+}
+
+void Scoring::clearPins(){
+    pindicator.clear();
 }

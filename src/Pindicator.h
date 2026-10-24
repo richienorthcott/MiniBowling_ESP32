@@ -5,14 +5,11 @@
 class Pindicator{
     public:
         Pindicator(HT16K33* servos);                        
+        void begin();
+        
         void showPinStatus(uint16_t pinStatus);
         void showAll();
-        void clear();
-        void begin();
-        void heartbeat();
+        void clear();        
     private:        
-        HT16K33* _matrixDriver;      
-        uint8_t testVal = 0;
-        uint8_t delaySteps =0;
-        void showPins();
+        HT16K33* _matrixDriver;
 };

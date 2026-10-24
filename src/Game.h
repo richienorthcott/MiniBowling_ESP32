@@ -1,6 +1,7 @@
 #pragma once
 #include <Player.h>
 #include <LiquidCrystal_I2C.h>
+#include <Globals.h>
 
 class Game{
     public:

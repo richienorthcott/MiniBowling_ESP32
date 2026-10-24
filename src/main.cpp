@@ -172,7 +172,7 @@ void setupPins(){
 }
 
 void resetPinsetter(){
-    //pinsetter.init();
+    pinsetter.init();
     controlPanel.mainMenu();    
     laneLighting.lavaAnim();
 }
@@ -182,7 +182,6 @@ void handleFlags(){
     if(flag_updateHeartbeat){
         pinsetter.heartbeat();
         laneLighting.heartbeat();
-        scoring.heartbeat();
         flag_updateHeartbeat = false;
     }
 
@@ -201,6 +200,7 @@ void handleFlags(){
             case ControlPanel::ControlPanelPage::MAIN:
                 if(pinsetter.doCycle(false)){
                     controlPanel.showSpeed(0);
+                    scoring.clearPins();
                     laneLighting.comet();
                 }
                 break;
@@ -267,7 +267,10 @@ void handleFlags(){
     }
 
     if(flag_ballSense){
-        if(pinsetter.doCycle(true)) laneLighting.comet();
+        if(pinsetter.doCycle(true)){
+            laneLighting.comet();
+            scoring.clearPins();
+        }
         flag_ballSense = false;
     }
     
@@ -354,13 +357,36 @@ void loop() {
         machineState = machineStatus.sequenceStep;               
         result = controlPanel.showPinsetterStatus(machineState);
         
+        uint8_t score;
+        switch(machineState){            
+            case Pinsetter::PinsetterPose::SWEEPUP:                
+                //show current pin status on pindicator
+                //score will normally be 10. Don't do anything with it here.
+                score = scoring.displayPins();            
+                break;                        
+            
+            case Pinsetter::PinsetterPose::READPINSDROPPED:
+                //called after throw 1    
+                score = scoring.displayPins();
+                result = controlPanel.submitPins(6, true);
+                result = pinsetter.continuefromThrowOne();                
+                break;
+            
+            case Pinsetter::PinsetterPose::READTHROWTWO:
+                //called after throw 2
+                score = scoring.displayPins();
+                result = controlPanel.submitPins(3, false);
+                result = pinsetter.continuefromThrowTwo();
+                break;
+        }
+        
         if(machineStatus.pinsetterMode == Pinsetter::PinsetterMode::INITIALISING1 || machineStatus.pinsetterMode == Pinsetter::PinsetterMode::INITIALISING2){
             result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::INITIALISING);   
             return;
         } 
-
+       
         switch(machineState){            
-            case Pinsetter::PinsetterPose::READY:
+            case Pinsetter::PinsetterPose::READY:                
                 if(machineStatus.throwOne){
                     result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::BOWL1);   
                 }else{
@@ -368,6 +394,7 @@ void loop() {
                 }
                 laneLighting.wipeGreen();
                 break;
+        
             case Pinsetter::PinsetterPose::WAITFORPINS:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::WAIT);
                 break;       
