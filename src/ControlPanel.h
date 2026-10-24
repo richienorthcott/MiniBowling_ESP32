@@ -1,37 +1,17 @@
 #pragma once
 #include <LiquidCrystal_I2C.h>
+/*
 #include <ht16k33.h>
 #include <Pindicator.h>
 #include <PinSensor.h>
+*/
 #include <Pinsetter.h>
 #include <Game.h>
 #include <Globals.h>
-/*
-    MAIN
-    - Cycle
-    - Game
-    - Util
-        GAME
-        - Scroll
-        - Replay
-        - Setup
-            SETUP
-            - Player
-            - Frames
-            - Start
-        UTIL
-        - Light
-        - Motor
-        - Reset        
-            LIGHT
-            - f1
-            - f3
-*/
-
 
 class ControlPanel{
     public:
-        ControlPanel(LiquidCrystal_I2C* lcd, HT16K33* ledMatrix);
+        ControlPanel(LiquidCrystal_I2C* lcd);
         
         enum ControlPanelMessage{
             INITIALISING,
@@ -60,8 +40,7 @@ class ControlPanel{
         bool showDeck(bool loaded);                                   //prints whether the deck is full or empty. Returns false if not in MAIN mode
         bool showMotor(bool motor);                                   //prints the state of the main motor. Returns false if not in MAIN mode
 
-        Player::ScoreType submitPins(PinSensor::pinStatus pinsAndScore, bool isThrowOne);        
-        void clearPins();
+        bool submitPins(uint8_t score, bool isThrowOne);                
 
         //these are all different overall menu 'modes'
         void notConnected();
@@ -78,10 +57,7 @@ class ControlPanel{
 
     private:        
         void initMenu();
-        LiquidCrystal_I2C* _lcd;
-        HT16K33* _ledMatrix;
-        Pindicator _pindicator;
-
+        LiquidCrystal_I2C* _lcd;    
         //these variables persist the menu status if changing page
         float lastSpeed = 0;
         uint8_t lastLoad = 0;

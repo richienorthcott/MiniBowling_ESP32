@@ -9,8 +9,7 @@
 
 #include <Pinsetter.h>
 #include <ControlPanel.h>
-#include <Pindicator.h>
-#include <PinSensor.h>
+#include <Scoring.h>
 
 hw_timer_t *heartbeat = NULL;
 
@@ -23,8 +22,8 @@ FastAccelStepperEngine engine = FastAccelStepperEngine();
 
 Pinsetter pinsetter(&servos);
 LaneLighting laneLighting(lane_leds);
-ControlPanel controlPanel(&lcd, &ledmatrixdriver);
-PinSensor sensorArray(&pinSensors);
+ControlPanel controlPanel(&lcd);
+Scoring scoring(&pinSensors, &ledmatrixdriver);
 
 Pinsetter::PinsetterPose machineState = Pinsetter::PinsetterPose::INIT;
 
@@ -173,9 +172,8 @@ void setupPins(){
 }
 
 void resetPinsetter(){
-    pinsetter.init();
-    controlPanel.mainMenu();
-    controlPanel.clearPins();
+    //pinsetter.init();
+    controlPanel.mainMenu();    
     laneLighting.lavaAnim();
 }
 
@@ -184,6 +182,7 @@ void handleFlags(){
     if(flag_updateHeartbeat){
         pinsetter.heartbeat();
         laneLighting.heartbeat();
+        scoring.heartbeat();
         flag_updateHeartbeat = false;
     }
 
@@ -320,7 +319,7 @@ void setup() {
     servos.begin();
     servos.setPWMFreq(SERVO_PWM_FREQUENCY);
     delay(10);
-    sensorArray.begin();
+    scoring.begin();
     delay(3000);
     
     pinsetter.begin(&engine);
@@ -372,22 +371,7 @@ void loop() {
             case Pinsetter::PinsetterPose::WAITFORPINS:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::WAIT);
                 break;       
-            case Pinsetter::PinsetterPose::SCORECYCLE:                                                
-                PinSensor::pinStatus ps = sensorArray.getStatus();
-            
-                switch(controlPanel.submitPins(ps, machineStatus.throwOne)){
-                    case Player::ScoreType::STRIKE:
                         
-                        break;
-                    case Player::ScoreType::SPARE:                        
-                        
-                        break;
-                    case Player::ScoreType::OPEN:                        
-                    case Player::ScoreType::NEW:                        
-                        break;
-                    }
-                    pinsetter.continuwWithScore(ps.pinsDown);
-                break;
             default:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::CYCLING);
                 break;

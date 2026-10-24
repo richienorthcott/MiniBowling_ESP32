@@ -1,14 +1,12 @@
 #include <ControlPanel.h>
 
-ControlPanel::ControlPanel(LiquidCrystal_I2C* lcd, HT16K33* ledMatrix):_pindicator(ledMatrix),_game(lcd){
-    _lcd = lcd;
-    _ledMatrix = ledMatrix;
+ControlPanel::ControlPanel(LiquidCrystal_I2C* lcd):_game(lcd){
+    _lcd = lcd;    
 }
 
 void ControlPanel::begin(){
     _lcd->init();
-    _lcd->backlight();
-    _pindicator.begin();
+    _lcd->backlight();    
     currentPose = ControlPanelPage::INIT;
     initMenu();
 }
@@ -201,21 +199,11 @@ bool ControlPanel::scrollGame(){
     return true;
 }
 
-void ControlPanel::clearPins(){
-    _pindicator.clear();
-}
-
-Player::ScoreType ControlPanel::submitPins(PinSensor::pinStatus pinsAndScore, bool isThrowOne){
+bool ControlPanel::submitPins(uint8_t score, bool isThrowOne){
     //only submit the score if active game is running
-    
-    Player::ScoreType ret = Player::ScoreType::NEW;
-
-    _pindicator.showPinStatus(pinsAndScore.pins);
-    
     if(_game.currentPose == Game::GamePose::RUNNING){
-        ret = _game.submitScore(isThrowOne, pinsAndScore.pinsDown);    
-        if(currentPose == ControlPanelPage::GAME) _game.printScore();
+    
     }    
     
-    return ret;
+    return true;
 }
