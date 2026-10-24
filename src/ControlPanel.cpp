@@ -15,9 +15,9 @@ void ControlPanel::begin(){
 
 void ControlPanel::initMenu(){
     _lcd->clear();
-    _lcd->setCursor(0, 0); _lcd->print("    MINI BOWLING    ");
-    _lcd->setCursor(0, 1); _lcd->print("    ============    ");
-    _lcd->setCursor(0, 3); _lcd->print("               v1.23");
+    _lcd->setCursor(4, 0); _lcd->print("MINI BOWLING");
+    _lcd->setCursor(4, 1); _lcd->print("============");
+    _lcd->setCursor(15, 3); _lcd->print("v"); _lcd->print(VERSION);
 }
 
 void ControlPanel::mainMenu(){
@@ -155,14 +155,6 @@ bool ControlPanel::showDeck(bool loaded){
     return true;
 }
 
-void ControlPanel::submitPins(PinSensor::pinStatus pinsAndScore){
-    _pindicator.showPinStatus(pinsAndScore.pins);
-}
-
-void ControlPanel::clearPins(){
-    _pindicator.clear();
-}
-
 bool ControlPanel::showSpeed(float speed){
     lastSpeed = speed;
     if(currentPose != ControlPanelPage::MAIN) return false;
@@ -207,4 +199,23 @@ bool ControlPanel::scrollGame(){
     if(_game.currentPose != Game::GamePose::RUNNING) return false;
     _game.scroll();
     return true;
+}
+
+void ControlPanel::clearPins(){
+    _pindicator.clear();
+}
+
+Player::ScoreType ControlPanel::submitPins(PinSensor::pinStatus pinsAndScore, bool isThrowOne){
+    //only submit the score if active game is running
+    
+    Player::ScoreType ret = Player::ScoreType::NEW;
+
+    _pindicator.showPinStatus(pinsAndScore.pins);
+    
+    if(_game.currentPose == Game::GamePose::RUNNING){
+        ret = _game.submitScore(isThrowOne, pinsAndScore.pinsDown);    
+        if(currentPose == ControlPanelPage::GAME) _game.printScore();
+    }    
+    
+    return ret;
 }

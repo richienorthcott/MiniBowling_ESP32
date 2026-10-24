@@ -286,13 +286,26 @@ void Pinsetter::heartbeat(){
                          break;
                }
                break;
-
+          
+          case PinsetterPose::SCORECYCLE:
+               //entry point to cycle               
+               //wait for response from main loop (change status to SCORESUBMITTED)
+               break;
+          case PinsetterPose::SCORESUBMITTED:
+               switch(currentMode){
+                    case PinsetterMode::THROW_ONE:
+                         currentPose = PinsetterPose::THROWONE;
+                         break;
+                    case PinsetterMode::THROW_TWO:
+                         currentPose = PinsetterPose::THROWTWO;
+                         break;
+               }               
+               break;
            case PinsetterPose::DELAYCYCLE:
                //sets to the CYCLE state but with dealy. This adds a delay before the sweep moves from UP to GUARD
                delaySteps += 1;
-               if(delaySteps == CYCLE_DELAY) currentPose = PinsetterPose::CYCLE;          
+               if(delaySteps == CYCLE_DELAY) currentPose = PinsetterPose::SCORECYCLE;          
                break;
-
      }
 
      //if the turret is nearly full and the motor is running...
@@ -333,6 +346,11 @@ bool Pinsetter::doCycle(bool pause){
           return true;          
      }
      return false; //current pinsetter state is not READY, don't do anything!
+}
+
+void Pinsetter::continueWithScore(uint8_t score){
+     //add logic here to handle strike on 1st throw or no pins down.
+     if (currentPose == PinsetterPose::SCORECYCLE) currentPose = PinsetterPose::SCORESUBMITTED;
 }
 
 bool Pinsetter::startMotor(){

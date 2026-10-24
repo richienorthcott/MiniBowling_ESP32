@@ -36,6 +36,8 @@ class Pinsetter{
             PINSREPLACING,
             PINSREPLACED,
             CYCLE,
+            SCORECYCLE,
+            SCORESUBMITTED,
             DELAYCYCLE
         };
         
@@ -62,7 +64,8 @@ class Pinsetter{
         void turretHomed();             //called by sensor interrupt from main program 
         void pinSense();                //called by sensor interrupt from main program
         bool doCycle(bool pause);       //trigger the pinsetter cycle. Set pause= true to include a delay.
-            
+        void submitScore(uint8_t score);    
+
         bool startMotor();           //restart the coneyor if stopped.      
         
         pinsetterStatus getStatus();    //returns a struct of current pinsetter status

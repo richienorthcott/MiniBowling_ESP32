@@ -15,15 +15,15 @@ PinSensor::pinStatus PinSensor::getStatus(){
     
     PCF8575::DigitalInput di = _interface->digitalReadAll();
     if(!di.p13){
-        retval.score += 1;
+        retval.pinsDown += 1;
         retval.pins |= 0x80;
     }
     if(!di.p11){
-        retval.score += 1;
+        retval.pinsDown += 1;
         retval.pins |= 0x100;
     }
     if(!di.p12){
-        retval.score += 1;
+        retval.pinsDown += 1;
         retval.pins |= 0x10;
     }
     return retval; 

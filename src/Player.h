@@ -17,7 +17,7 @@ class Player{
             ScoreType status;
         };
         void init();        //reset the player for a new game
-        bool setScore(uint8_t frame, bool throw1, uint8_t score);   //set points by frame and throw1/throw2 status 
+        Player::ScoreType setScore(uint8_t frame, bool throw1, uint8_t score);   //set points by frame and throw1/throw2 status 
         FrameScore getScore(uint8_t frame);                         //returns the total points for a frame, and its status.
         int getTotal();                                             //returns the total points for this player
     private:        

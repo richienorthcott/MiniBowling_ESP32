@@ -19,18 +19,19 @@ void Game::printScore(){
     //update the frame counter
     _lcd->setCursor(15,0);
     
-    if(currentFrame < 9) _lcd->print(0);    //write leading zero to frame counter
-    _lcd->print(this->currentFrame + 1);
+    if(currentPose == Game::GamePose::GAMEOVER){
+        _lcd->print("DONE ");    
+    }else{
+        if(currentFrame < 9) _lcd->print(0);    //write leading zero to frame counter
+        _lcd->print(this->currentFrame + 1);    
+        _lcd->print("/");       
     
-    _lcd->print("/");       
+        if(numFrames < 9) Serial.print(0);    //write leading zero to frame counter
+        _lcd->print(this->numFrames + 1);    
+    }
     
-    if(numFrames < 9) Serial.print(0);    //write leading zero to frame counter
-    _lcd->print(this->numFrames + 1);    
-    
-    _lcd->setCursor(0, 1);
-    this->printPlayer(displayPlayer, displayPlayer == currentPlayer);                      
-
-    _lcd->setCursor(0, 2);    
+    _lcd->setCursor(0, 1);this->printPlayer(displayPlayer, displayPlayer == currentPlayer);                      
+    _lcd->setCursor(0, 2);        
     if(displayPlayer < numPlayers){
         this->printPlayer(displayPlayer + 1, (displayPlayer +1) == currentPlayer);                          
     }else{
@@ -96,4 +97,21 @@ void Game::scroll(){
     displayPlayer += 1;
     if (displayPlayer == numPlayers) displayPlayer = 0;
     printScore();
+}
+
+Player::ScoreType Game::submitScore(bool isThrowOne, uint8_t score){
+    displayPlayer = currentPlayer;    
+    
+    Player::ScoreType ret = players[currentPlayer].setScore(currentFrame, isThrowOne, score);
+    
+    if(!isThrowOne){
+        currentPlayer += 1;
+        if(currentPlayer > numPlayers){
+            currentFrame += 1;
+            if(currentFrame == numFrames) this->currentPose = Game::GamePose::GAMEOVER;
+            currentPlayer = 0;
+            displayPlayer = 0;
+        }
+    }
+    return ret;
 }

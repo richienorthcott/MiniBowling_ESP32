@@ -13,13 +13,8 @@ void Player::init(){
     }        
 }
 
-bool Player::setScore(uint8_t frame, bool throw1, uint8_t score){
-    //don't allow population of later frames unless previous frame completed
-    if(frame >0){
-        if(_type[frame-1] == ScoreType::NEW){
-            return false;
-        }
-    }
+Player::ScoreType Player::setScore(uint8_t frame, bool throw1, uint8_t score){
+
     
     if(throw1){
         _throw[0][frame] = score;
@@ -30,14 +25,14 @@ bool Player::setScore(uint8_t frame, bool throw1, uint8_t score){
         }
     }else{
         //this is throw 2
-        if(_throw[0][frame] + score > 10) return false;
-        if(score == 0) return true;
-        _throw[1][frame] = score;
-        if(score + _throw[0][frame] == 10){
-            _type[frame] = ScoreType::SPARE;
-        }
+        if(_throw[0][frame] + score > 10){
+            _throw[1][frame] = 10 - _throw[0][frame];        
+        }else{
+            _throw[1][frame] = score;
+        }        
+        if(score + _throw[0][frame] == 10) _type[frame] = ScoreType::SPARE;        
     }
-    return true;//score was added successfully
+    return _type[frame];
 }
 
 Player::FrameScore Player::getScore(uint8_t frame){

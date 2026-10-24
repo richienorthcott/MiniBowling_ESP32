@@ -8,7 +8,7 @@ class PinSensor{
         void begin();
         struct pinStatus{
             uint16_t pins; //each bit of this number represents a pin, used by the pindicator
-            uint8_t score; //this is the score from 0-10
+            uint8_t pinsDown; //this is the score from 0-10
         };
         pinStatus getStatus(); 
     private:

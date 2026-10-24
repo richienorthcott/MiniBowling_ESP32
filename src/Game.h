@@ -18,6 +18,7 @@ class Game{
         void changeFrameCount();        
         void printScore();                
         void scroll();                                  //scroll through players on LCD
+        Player::ScoreType submitScore(bool isThrowOne, uint8_t score);
 
         uint8_t numPlayers = 1;                         //this is zero indexed, so 0 means 1
         uint8_t numFrames = 9;                         //this is zero indexed, so 0 means 1

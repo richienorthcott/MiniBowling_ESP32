@@ -372,6 +372,22 @@ void loop() {
             case Pinsetter::PinsetterPose::WAITFORPINS:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::WAIT);
                 break;       
+            case Pinsetter::PinsetterPose::SCORECYCLE:                                                
+                PinSensor::pinStatus ps = sensorArray.getStatus();
+            
+                switch(controlPanel.submitPins(ps, machineStatus.throwOne)){
+                    case Player::ScoreType::STRIKE:
+                        
+                        break;
+                    case Player::ScoreType::SPARE:                        
+                        
+                        break;
+                    case Player::ScoreType::OPEN:                        
+                    case Player::ScoreType::NEW:                        
+                        break;
+                    }
+                    pinsetter.continuwWithScore(ps.pinsDown);
+                break;
             default:
                 result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::CYCLING);
                 break;
