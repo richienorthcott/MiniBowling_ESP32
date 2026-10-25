@@ -11,71 +11,61 @@ void Game::init(){
     currentPlayer = 0;
     currentFrame = 0; 
     displayPlayer = 0;
+    scrollPlayer = 0;
     for (uint8_t j=0; j < 8; j++) players[j].init();            
 }
 
 void Game::printScore(){    
-    _lcd->setCursor(15,0);
-        
+    //print the frame information
     if(currentPose == Game::GamePose::GAMEOVER){
-        _lcd->print("OVER ");            
+        _lcd->setCursor(8, 0);_lcd->print("OVER           ");
+        _lcd->setCursor(7, 3);_lcd->print("      ");         //clear the replay menu optpion            
     }else{
-        if(currentFrame < 9) _lcd->print(0);    //write leading zero to frame counter        
-       _lcd->print(currentFrame + 1);    
+        _lcd->setCursor(15,0);
+        if(currentFrame < 9) _lcd->print(0);    //add leading zero if frame <10
+       _lcd->print(currentFrame + 1);           //print current frame number
        _lcd->print("/");           
-        if(numFrames < 9) _lcd->print(0);    //write leading zero to frame counter
-        _lcd->print(this->numFrames + 1);                
+        if(numFrames < 9) _lcd->print(0);       //add leading zero if frame <10
+        _lcd->print(this->numFrames + 1);       //print total frames
     }
-    
-    _lcd->setCursor(0, 1);        
-    if(currentPlayer==0){
-        Serial.print(">");    
-        Serial.println(displayPlayer);    
-        if(numPlayers>0) Serial.println(" 1");
-    }else{
-        Serial.print(" ");
-        Serial.println(displayPlayer-1);
-        Serial.print(">");
-        Serial.println(displayPlayer);
-    }
-    
-    
-    
-    this->printPlayer(displayPlayer, displayPlayer == currentPlayer && currentPose != Game::GamePose::GAMEOVER, 1);                          
-    
-    _lcd->setCursor(0, 2);            
-    if(displayPlayer < numPlayers){
-        this->printPlayer(displayPlayer + 1, (displayPlayer +1) == currentPlayer, 2);                          
-    }else{
-        _lcd->print("                    ");        
-    }
-}
 
-void Game::debugScore(){
-    //_lcd->setCursor(0, 1);        
-    //this->printPlayer(displayPlayer, displayPlayer == currentPlayer && currentPose != Game::GamePose::GAMEOVER, 1);                          
+    if(numPlayers < 2){
+        _lcd->setCursor(0, 3);
+        _lcd->print("      ");         //clear the scroll optpion         
+    }
 
-    
-    if(currentPlayer==0){
-        if (currentPlayer == displayPlayer) Serial.print(">");    
-        Serial.println(displayPlayer);    
+    if(currentFrame ==0){
+        if(currentPlayer ==0){
+            if(players[0].getScore(currentFrame).status == Player::ScoreType::NEW){
+                _lcd->setCursor(7, 3);_lcd->print("      ");
+            }else{
+                _lcd->setCursor(7, 3);_lcd->print("replay");
+            }
+        }
+    }
+
+
+    //display format...
+    //if one player, use 1st line only
+    //if two or more players, active player is top line for plater one, else always bottom line.
+    //for first player, scoeboard shows current and next player
+    //for all other players, scoreboard shows current and previous player
+                    
+    if(currentPlayer == 0){        
+        if (currentPlayer == displayPlayer) printPlayer(displayPlayer, currentPose != Game::GamePose::GAMEOVER, 1);                                  
         if(numPlayers > 0){
-            Serial.print(" ");
-            Serial.println(displayPlayer + 1);
+            printPlayer(displayPlayer + 1, false, 2);                                          
         }else{
-            Serial.println();
+            _lcd->setCursor(0,2);_lcd->print("                    ");    //clear the 2nd line
         }
     }else{
-        Serial.print(" ");
-        Serial.println(displayPlayer- 1);
-        if (currentPlayer == displayPlayer) Serial.print(">");    
-        Serial.println(displayPlayer);
+        printPlayer(displayPlayer-1, false, 1);                                                             
+        printPlayer(displayPlayer, currentPose != Game::GamePose::GAMEOVER, 2);                                          
     }
 }
 
-
-
 void Game::printPlayer(uint8_t player, bool active, uint8_t row){    
+    _lcd->setCursor(0, row);
     if(active){
         _lcd->print(">");    
     }else{
@@ -146,19 +136,25 @@ void Game::changeFrameCount(){
     _lcd->print(" ");    
 } 
 
-void Game::scroll(){
-    displayPlayer += 1;
-    if (displayPlayer >= numPlayers) displayPlayer = 0;
-    printScore();
+bool Game::scroll(){
+    if(numPlayers < 2 )return false; //no need to scroll as there's one player;
+    printPlayer(scrollPlayer, currentPlayer == scrollPlayer && currentPose != Game::GamePose::GAMEOVER, 1);
+    printPlayer(scrollPlayer + 1, currentPlayer == scrollPlayer + 1 && currentPose != Game::GamePose::GAMEOVER, 2);
+    scrollPlayer += 1;
+    if(scrollPlayer >= numPlayers) scrollPlayer = 0;    
+    return true;
 }
 
 Player::ScoreType Game::submitScore(bool isThrowOne, uint8_t score){
+    
+    Player::ScoreType ret = Player::ScoreType::OPEN;
+
     if(currentPose == Game::GamePose::RUNNING){
         //submit a score to the game        
-        return this->submitToGame(isThrowOne, score);
+        ret = submitToGame(isThrowOne, score);
+        printScore();
     }else{
-        //submit to get back frame status, but don't persist it.
-        Player::ScoreType ret = Player::ScoreType::OPEN;
+        //submit to get back frame status, but don't persist it.        
         if(isThrowOne){
             lastThrowOne = score;
             if (score == 10) ret = Player::ScoreType::STRIKE;
@@ -166,8 +162,8 @@ Player::ScoreType Game::submitScore(bool isThrowOne, uint8_t score){
             if(score + lastThrowOne == 10) ret = Player::ScoreType::SPARE;        
             lastThrowOne = 0;
         }        
-        return ret;                
     }
+    return ret;                
 }
 
 Player::ScoreType Game::submitToGame(bool isThrowOne, uint8_t score){
@@ -210,3 +206,55 @@ Player::ScoreType Game::submitToGame(bool isThrowOne, uint8_t score){
     }    
     return ret;
 }
+
+bool Game::resetFrame(){    
+    if (currentPose != Game::GamePose::RUNNING) return false;
+
+    //remove the current frame, if in progress
+    if (players[currentPlayer].getScore(currentFrame).status != Player::ScoreType::NEW){
+        players[currentPlayer].resetFrame(currentFrame);
+        printScore();
+        return true;
+    }
+    
+    //remove the last submitted frame
+    if(currentPlayer > 0){
+        currentPlayer -= 1;
+        displayPlayer = currentPlayer;
+        players[currentPlayer].resetFrame(currentFrame);
+        printScore();
+        return true;
+    }else{
+        if (currentFrame>0){
+            currentFrame -= 1;
+            currentPlayer = numPlayers;
+            displayPlayer = currentPlayer;
+            players[currentPlayer].resetFrame(currentFrame);
+            printScore();
+            return true;
+        }   
+    }    
+    return false;//nothing to clear
+}
+
+/*
+void Game::debugScore(){
+    for (byte jPlayer=0; jPlayer<=numPlayers; jPlayer ++){
+        Serial.print(jPlayer);
+        Serial.print(": ");
+        
+        for (byte jFrame=0; jFrame<=numFrames; jFrame ++){
+            Serial.print("f");
+            Serial.print(jFrame);
+            Serial.print(":[s");
+            Serial.print(players[jPlayer].getScore(jFrame).status);
+            Serial.print(" ");
+            Serial.print(players[jPlayer].getScore(jFrame).throw1);
+            Serial.print("|");
+            Serial.print(players[jPlayer].getScore(jFrame).throw2);
+            Serial.print("], ");
+        }
+        Serial.println();
+    }    
+}
+*/

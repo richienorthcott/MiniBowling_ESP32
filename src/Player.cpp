@@ -4,15 +4,16 @@ Player::Player(){
     this->init();
 }
 
-void Player::init(){
-    //reset all frame scores for player
-    for(uint8_t i=0; i<12; i++){            
-        this->setScore(i, true, 0);
-        this->setScore(i, false, 0);            
-        _type[i] = Player::ScoreType::NEW;   
-    }        
+void Player::init(){  
+    for(uint8_t i=0; i<12; i++) resetFrame(i);                 
     extraThrows = 0;    
 }
+
+void Player::resetFrame(uint8_t frame){
+    _throw[0][frame] = 0;
+    _throw[1][frame] = 0;
+    _type[frame] = Player::ScoreType::NEW;
+};
 
 Player::ScoreType Player::setScore(uint8_t frame, bool throw1, uint8_t score){
     if(throw1){
@@ -43,6 +44,8 @@ Player::FrameScore Player::getScore(uint8_t frame){
     Player::FrameScore ret;
     ret.score = _throw[0][frame] + _throw[1][frame];
     ret.status = _type[frame];
+    ret.throw1 = _throw[0][frame];
+    ret.throw2 = _throw[1][frame];
     return ret;
 }
 

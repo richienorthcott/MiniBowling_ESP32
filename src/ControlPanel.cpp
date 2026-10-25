@@ -48,7 +48,7 @@ void ControlPanel::gameMenu(){
     _lcd->setCursor(0, 0);
     
     _lcd->print(_game.numPlayers + 1);
-    _lcd->print("P GAME  frame:--/--");    
+    _lcd->print("P GAME");    
     switch(_game.currentPose){
         case Game::GamePose::INIT:            
             _lcd->setCursor(0, 1); _lcd->print(" Please set up game ");            
@@ -57,7 +57,8 @@ void ControlPanel::gameMenu(){
    
             break;
         default:            
-            _lcd->setCursor(0, 3);_lcd->print("scroll|rebowl| setup");    
+            _lcd->setCursor(9, 0);_lcd->print("frame:");
+            _lcd->setCursor(0, 3);_lcd->print("scroll|replay| setup");    
             _game.printScore();            
             break;
         }
@@ -195,14 +196,16 @@ bool ControlPanel::initGame(){
 bool ControlPanel::scrollGame(){
     if(currentPose != ControlPanelPage::GAME) return false;
     //if(_game.currentPose != Game::GamePose::RUNNING) return false;
-    _game.scroll();
-    return true;
+    return _game.scroll();    
+}
+
+bool ControlPanel::resetFrame(){
+    if(currentPose != ControlPanelPage::GAME) return false;
+    return _game.resetFrame();    
 }
 
 Player::ScoreType ControlPanel::submitPins(uint8_t score, bool isThrowOne){
     Player::ScoreType ret;
-    ret = _game.submitScore(isThrowOne, score);        
-    if (currentPose == ControlPanel::ControlPanelPage::GAME) _game.printScore();        
-    
+    ret = _game.submitScore(isThrowOne, score);            
     return ret;    
 }

@@ -54,14 +54,14 @@ class ControlPanel{
         bool updateFrameCount();
         bool initGame();
         bool scrollGame();
-
+        bool resetFrame();
     private:        
         void initMenu();
         LiquidCrystal_I2C* _lcd;    
         //these variables persist the menu status if changing page
         float lastSpeed = 0;
         uint8_t lastLoad = 0;
-        ControlPanelMessage lastMessage = ControlPanelMessage::WAIT;
+        ControlPanelMessage lastMessage = ControlPanelMessage::INITIALISING;
         Pinsetter::PinsetterPose lastStatus = Pinsetter::PinsetterPose::INIT;
         bool lastDeck = false;
         bool lastMotor = false;
