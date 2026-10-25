@@ -14,30 +14,31 @@ class Game{
         GamePose currentPose = GamePose::INIT;
             
         Game(LiquidCrystal_I2C* lcd);                 
+        Game();                                         //initialise without LCD, for testing
         void init();                                    //initialises a new game for up to 8 players
         
-        void changePlayerCount();
-        void changePlayerCount(uint8_t totalPlayers);
+        void changePlayerCount();                       //increments the palyer count
+        void changePlayerCount(uint8_t totalPlayers);   //set the number of players
         
-        void changeFrameCount();        
-        void changeFrameCount(uint8_t totalFrames); 
+        void changeFrameCount();                        //increments the frame count
+        void changeFrameCount(uint8_t totalFrames);     //set the number of frwames
         
-        void printScore();                
+        void debugScore();                              //print to Serial
+        void printScore();                              //print to LCD
         void scroll();                                  //scroll through players on LCD
         
         Player::ScoreType submitScore(bool isThrowOne, uint8_t score);        
 
         uint8_t numPlayers = 1;                         //this is zero indexed, so 0 means 1
-        uint8_t numFrames = 9;                         //this is zero indexed, so 0 means 1
-        uint8_t currentFrame = 0;                       //this is zero indexed, so 0 means 1
-    
+        uint8_t numFrames = 9;                          //this is zero indexed, so 0 means 1    
     private:
-        Player players[8];                              //allow up to 8 players
-        void printPlayer(uint8_t player, bool active, uint8_t row);  //prints 20 char summary of player status                                    
-        void printFrame(uint8_t player, uint8_t frame);  //prints 20 char summary of player status                                    
+        Player players[8];                                              //allow up to 8 players
+        void printPlayer(uint8_t player, bool active, uint8_t row);     //prints 20 char summary of player status                                    
+        void printFrame(uint8_t player, uint8_t frame);                 //used by printPlayer function. Prints a frame outcome
         LiquidCrystal_I2C* _lcd;
+        Player::ScoreType submitToGame(bool isThrowOne, uint8_t score);           
         uint8_t currentPlayer = 0;                      //this is zero indexed, so 0 means 1        
-        uint8_t displayPlayer = 0;                      //this is zero indexed, so 0 means 1        
-        Player::ScoreType submitToGame(bool isThrowOne, uint8_t score);   
-        uint8_t lastThrowOne = 0;
+        uint8_t displayPlayer = 0;             
+        uint8_t lastThrowOne = 0;        
+        uint8_t currentFrame = 0;                       //this is zero indexed, so 0 means 1
 };

@@ -1,5 +1,7 @@
 #include <Game.h>
 
+Game::Game(){}
+
 Game::Game(LiquidCrystal_I2C* lcd){
     _lcd = lcd;
 }
@@ -9,10 +11,7 @@ void Game::init(){
     currentPlayer = 0;
     currentFrame = 0; 
     displayPlayer = 0;
-
-    for(uint8_t j=0; j < 8; j++){
-        players[j].init();            
-    }
+    for (uint8_t j=0; j < 8; j++) players[j].init();            
 }
 
 void Game::printScore(){    
@@ -29,6 +28,19 @@ void Game::printScore(){
     }
     
     _lcd->setCursor(0, 1);        
+    if(currentPlayer==0){
+        Serial.print(">");    
+        Serial.println(displayPlayer);    
+        if(numPlayers>0) Serial.println(" 1");
+    }else{
+        Serial.print(" ");
+        Serial.println(displayPlayer-1);
+        Serial.print(">");
+        Serial.println(displayPlayer);
+    }
+    
+    
+    
     this->printPlayer(displayPlayer, displayPlayer == currentPlayer && currentPose != Game::GamePose::GAMEOVER, 1);                          
     
     _lcd->setCursor(0, 2);            
@@ -38,6 +50,30 @@ void Game::printScore(){
         _lcd->print("                    ");        
     }
 }
+
+void Game::debugScore(){
+    //_lcd->setCursor(0, 1);        
+    //this->printPlayer(displayPlayer, displayPlayer == currentPlayer && currentPose != Game::GamePose::GAMEOVER, 1);                          
+
+    
+    if(currentPlayer==0){
+        if (currentPlayer == displayPlayer) Serial.print(">");    
+        Serial.println(displayPlayer);    
+        if(numPlayers > 0){
+            Serial.print(" ");
+            Serial.println(displayPlayer + 1);
+        }else{
+            Serial.println();
+        }
+    }else{
+        Serial.print(" ");
+        Serial.println(displayPlayer- 1);
+        if (currentPlayer == displayPlayer) Serial.print(">");    
+        Serial.println(displayPlayer);
+    }
+}
+
+
 
 void Game::printPlayer(uint8_t player, bool active, uint8_t row){    
     if(active){
@@ -90,7 +126,7 @@ void Game::changePlayerCount(uint8_t totalPlayers){
 }
 
 void Game::changeFrameCount(uint8_t totalFrames){
-    if (totalFrames > 0) numPlayers = totalFrames-1;  
+    if (totalFrames > 0) numFrames = totalFrames-1;  
 }
 
 void Game::changePlayerCount(){
@@ -118,7 +154,7 @@ void Game::scroll(){
 
 Player::ScoreType Game::submitScore(bool isThrowOne, uint8_t score){
     if(currentPose == Game::GamePose::RUNNING){
-        //submit a score to the game
+        //submit a score to the game        
         return this->submitToGame(isThrowOne, score);
     }else{
         //submit to get back frame status, but don't persist it.
@@ -138,7 +174,7 @@ Player::ScoreType Game::submitToGame(bool isThrowOne, uint8_t score){
 
     Player::ScoreType ret;
     displayPlayer = currentPlayer;    
-    
+
     //this section handles the possible extra throws on the last frame
     if(players[currentPlayer].extraThrows == 1){        
         players[currentPlayer].setScore(currentFrame + 1, true, score);        
@@ -154,18 +190,20 @@ Player::ScoreType Game::submitToGame(bool isThrowOne, uint8_t score){
     
     }else{
         ret = players[currentPlayer].setScore(currentFrame, isThrowOne, score);            
+        
         if(currentFrame == numFrames && ret == Player::ScoreType::STRIKE) players[currentPlayer].extraThrows = 2;
         if(currentFrame == numFrames && ret == Player::ScoreType::SPARE) players[currentPlayer].extraThrows = 1;            
     }
 
     if (players[currentPlayer].extraThrows == 0){
-        if(!isThrowOne || ret == Player::ScoreType::STRIKE ||ret == Player::ScoreType::EXTRAOPEN){
+        if(!isThrowOne || ret == Player::ScoreType::STRIKE || ret == Player::ScoreType::EXTRAOPEN){
             currentPlayer += 1;
-            if(currentPlayer > numPlayers){
+            displayPlayer += 1;
+            
+            if(currentPlayer > numPlayers){                
                 currentFrame += 1;            
-                currentPlayer = 0;
+                currentPlayer = 0;                        
                 displayPlayer = 0;
-        
                 if(currentFrame > numFrames) this->currentPose = Game::GamePose::GAMEOVER;              
             }
         }
