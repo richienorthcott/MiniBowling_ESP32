@@ -416,7 +416,7 @@ void loop() {
        
         switch(machineState){            
             case Pinsetter::PinsetterPose::READY:                
-                if(machineStatus.throwOne){
+                if(machineStatus.pinsetterMode == Pinsetter::PinsetterMode::THROW_ONE){
                     result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::BOWL1);   
                 }else{
                     result = controlPanel.showMessage(ControlPanel::ControlPanelMessage::BOWL2);

@@ -152,7 +152,6 @@ Player::ScoreType Game::submitScore(bool isThrowOne, uint8_t score){
     if(currentPose == Game::GamePose::RUNNING){
         //submit a score to the game        
         ret = submitToGame(isThrowOne, score);
-        printScore();
     }else{
         //submit to get back frame status, but don't persist it.        
         if(isThrowOne){
@@ -236,25 +235,3 @@ bool Game::resetFrame(){
     }    
     return false;//nothing to clear
 }
-
-/*
-void Game::debugScore(){
-    for (byte jPlayer=0; jPlayer<=numPlayers; jPlayer ++){
-        Serial.print(jPlayer);
-        Serial.print(": ");
-        
-        for (byte jFrame=0; jFrame<=numFrames; jFrame ++){
-            Serial.print("f");
-            Serial.print(jFrame);
-            Serial.print(":[s");
-            Serial.print(players[jPlayer].getScore(jFrame).status);
-            Serial.print(" ");
-            Serial.print(players[jPlayer].getScore(jFrame).throw1);
-            Serial.print("|");
-            Serial.print(players[jPlayer].getScore(jFrame).throw2);
-            Serial.print("], ");
-        }
-        Serial.println();
-    }    
-}
-*/

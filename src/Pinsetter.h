@@ -53,7 +53,7 @@ class Pinsetter{
             uint8_t turretSlot;
             PinsetterPose sequenceStep;
             PinsetterMode pinsetterMode;
-            bool throwOne;
+            //bool throwOne;
             bool motorRunning;
         };
 

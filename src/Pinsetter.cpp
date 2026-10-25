@@ -391,6 +391,5 @@ Pinsetter::pinsetterStatus Pinsetter::getStatus(){
      ret.sequenceStep = currentPose;
      ret.pinsetterMode = currentMode;
      ret.motorRunning = _mainMotor.currentPose == MainMotor::MainMotorPose::RUNNING;
-     ret.throwOne = currentMode == Pinsetter::PinsetterMode::THROW_ONE;
      return ret;
 }
