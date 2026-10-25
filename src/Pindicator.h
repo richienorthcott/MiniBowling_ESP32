@@ -4,7 +4,7 @@
 
 class Pindicator{
     public:
-        Pindicator(HT16K33* servos);                        
+        Pindicator(HT16K33* driver);                        
         void begin();
         
         void showPinStatus(uint16_t pinStatus);
@@ -12,5 +12,6 @@ class Pindicator{
         void clear();
         uint8_t randomPins();        
     private:        
-        HT16K33* _matrixDriver;
+        HT16K33* matrixDriver;
+        void updateLED(uint8_t LEDnumber, uint16_t sensorID, uint16_t sensorValue);
 };

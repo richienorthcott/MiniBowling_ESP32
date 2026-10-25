@@ -1,64 +1,21 @@
 #include <Globals.h>
-#include <Game.h>
+#include <Pinsensor.h>
+#include <PCF8575.h>
+#include <ht16k33.h>
+#include <Pindicator.h>
 
-Game myGame;
-bool printOnce = true;    
+PCF8575 interface(PCF8575_ADDRESS);
+PinSensor mySensor(&interface);
+HT16K33 leds;
+Pindicator myPindicator(&leds);
 
 void setup(){        
     Serial.begin(115200);
-    while(!Serial);
-    
-    myGame.changePlayerCount(2);
-    myGame.changeFrameCount(3);    
-    myGame.init();            
-
-    Serial.println();    
-    Serial.println();
-
-
-    myGame.submitScore(true, 1);    
-    myGame.submitScore(false, 2);
-    myGame.submitScore(true, 1);    
-    myGame.submitScore(false, 2);
-    myGame.submitScore(true, 1);    
-    myGame.submitScore(false, 2);
-    myGame.submitScore(true, 1);    
-    myGame.submitScore(false, 2);
-    myGame.submitScore(true, 1);    
-    //myGame.submitScore(false, 2);
-
-    
-    
-    
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-    Serial.print(myGame.resetFrame());
-
-
-    Serial.println();
+    Wire.begin();
+    mySensor.begin();;
+    myPindicator.begin();
 }
 
-void loop(){           
-        
-        /*
-        if(myGame.currentPose != Game::GamePose::RUNNING && printOnce){
-            printOnce = false;
- 
-        }
-            */
+void loop(){
+    myPindicator.showPinStatus(mySensor.getStatus().pins);
 }
