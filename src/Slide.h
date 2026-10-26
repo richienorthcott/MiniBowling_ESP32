@@ -14,7 +14,9 @@ class Slide{
         SlidePose currentPose = RECEIVE;
 
         void begin();        
-        void setPosition(SlidePose pos);        
+        void setPosition(SlidePose pos);
+        void dumpPins();
+        void receivePins();
     
     private:
         Adafruit_PWMServoDriver* _servoInterface;        
