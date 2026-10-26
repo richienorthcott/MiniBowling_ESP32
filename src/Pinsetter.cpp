@@ -384,12 +384,15 @@ bool Pinsetter::startMotor(){
 Pinsetter::pinsetterStatus Pinsetter::getStatus(){
      //set up a new struct to contain the returned properties
      Pinsetter::pinsetterStatus ret;
+
+     //ret.deckLoaded = false;
+     //if(_turret.deckHasPins) ret.deckLoaded = true; 
      
-     ret.deckLoaded = false;
-     if(_turret.deckHasPins) ret.deckLoaded = true; 
+     ret.deckLoaded = _turret.deckHasPins;
      ret.turretSlot = _turret.currentSlot;
      ret.sequenceStep = currentPose;
      ret.pinsetterMode = currentMode;
-     ret.motorRunning = _mainMotor.currentPose == MainMotor::MainMotorPose::RUNNING;
+     ret.motorRunning = (_mainMotor.currentPose == MainMotor::MainMotorPose::RUNNING);
+     
      return ret;
 }
