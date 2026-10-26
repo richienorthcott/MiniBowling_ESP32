@@ -8,6 +8,16 @@ void Slide::begin(){
     setPosition(currentPose);
 }
 
+void Slide::dumpPins(){
+    setPosition(SlidePose::DUMP);
+}
+
+void Slide::receivePins(){
+    setPosition(SlidePose::RECEIVE);
+}
+
+
+
 void Slide::setPosition(SlidePose pos){
     switch(pos){
         case SlidePose::DUMP:
