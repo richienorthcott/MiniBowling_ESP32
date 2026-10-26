@@ -195,7 +195,6 @@ bool ControlPanel::initGame(){
 
 bool ControlPanel::scrollGame(){
     if(currentPose != ControlPanelPage::GAME) return false;
-    //if(_game.currentPose != Game::GamePose::RUNNING) return false;
     return _game.scroll();    
 }
 

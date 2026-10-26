@@ -39,7 +39,6 @@ bool motorRunning = false;
 
 bool one = true;
 
-
 void ARDUINO_ISR_ATTR onTimer() {
     flag_updateHeartbeat = true;
 }
@@ -320,9 +319,7 @@ void handleFlags(){
 
 void setup() {    
     Serial.begin(SERIAL_BAUD); //init serial comms
-    while(!Serial);
-
-    setupPins();
+    while(!Serial);    
     
     controlPanel.begin();
     Wire.begin();    
@@ -336,6 +333,7 @@ void setup() {
         while(true);
     }
 
+    setupPins();
     setupInterrupts();
     setupTimer();  
   
@@ -344,6 +342,7 @@ void setup() {
     servos.begin();
     servos.setPWMFreq(SERVO_PWM_FREQUENCY);
     delay(10);
+    
     scoring.begin();
     delay(3000);
     
@@ -353,8 +352,6 @@ void setup() {
 }
 
 void loop() {       
-
-    
     handleFlags();
     Pinsetter::pinsetterStatus machineStatus = pinsetter.getStatus();
     bool result;//control panel functions return true/false which show if the screen was actually updated. Will depend on current control panel screen/mode

@@ -1,18 +1,11 @@
 #pragma once
 #include <LiquidCrystal_I2C.h>
-/*
-#include <ht16k33.h>
-#include <Pindicator.h>
-#include <PinSensor.h>
-*/
 #include <Pinsetter.h>
 #include <Game.h>
 #include <Globals.h>
 
 class ControlPanel{
-    public:
-        ControlPanel(LiquidCrystal_I2C* lcd);
-        
+    public:        
         enum ControlPanelMessage{
             INITIALISING,
             WAIT,
@@ -29,7 +22,8 @@ class ControlPanel{
             GAME,
             SETUP
         };
-
+        
+        ControlPanel(LiquidCrystal_I2C* lcd);
         ControlPanelPage currentPose = ControlPanelPage::INIT;
         void begin();
 
@@ -39,32 +33,30 @@ class ControlPanel{
         bool showSlot(uint8_t turretSlot);                            //prints the number of the active turret load slot. Returns false if not in MAIN mode
         bool showDeck(bool loaded);                                   //prints whether the deck is full or empty. Returns false if not in MAIN mode
         bool showMotor(bool motor);                                   //prints the state of the main motor. Returns false if not in MAIN mode
-
-        Player::ScoreType submitPins(uint8_t score, bool isThrowOne);                
-
-        //these are all different overall menu 'modes'
-        void notConnected();
-        void mainMenu();
-        void gameMenu();
-        void setupMenu();
-        void utilMenu();
-        void lightMenu();
-
-        bool updatePlayerCount();
-        bool updateFrameCount();
-        bool initGame();
-        bool scrollGame();
-        bool resetFrame();
-    private:        
-        void initMenu();
-        LiquidCrystal_I2C* _lcd;    
-        //these variables persist the menu status if changing page
-        float lastSpeed = 0;
-        uint8_t lastLoad = 0;
-        ControlPanelMessage lastMessage = ControlPanelMessage::INITIALISING;
-        Pinsetter::PinsetterPose lastStatus = Pinsetter::PinsetterPose::INIT;
-        bool lastDeck = false;
-        bool lastMotor = false;
-        Game _game;
         
+        void notConnected();    //menu display mode
+        void mainMenu();        //menu display mode
+        void gameMenu();        //menu display mode
+        void setupMenu();       //menu display mode
+        void utilMenu();        //menu display mode
+        void lightMenu();       //menu display mode
+
+        bool updatePlayerCount();       //relay to game object. Retrurns false if not in game setup mode.
+        bool updateFrameCount();        //relay to game object. Retrurns false if not in game setup mode.
+        bool initGame();                //relay to game object. Retrurns false if not in game setup mode.
+        bool scrollGame();              //relay to game object. Retrurns false if not in game mode.
+        bool resetFrame();              //relay to game object. Retrurns false if not in game mode.
+        Player::ScoreType submitPins(uint8_t score, bool isThrowOne);                
+    private:        
+        LiquidCrystal_I2C* _lcd;                                                
+        Game _game;
+
+        void initMenu();                                                        //the init mode can't be called by other classes
+
+        float lastSpeed = 0;                                                    //persist value when not displayed
+        uint8_t lastLoad = 0;                                                   //persist value when not displayed
+        ControlPanelMessage lastMessage = ControlPanelMessage::INITIALISING;    //persist value when not displayed
+        Pinsetter::PinsetterPose lastStatus = Pinsetter::PinsetterPose::INIT;   //persist value when not displayed
+        bool lastDeck = false;                                                  //persist value when not displayed
+        bool lastMotor = false;                                                 //persist value when not displayed        
 };
