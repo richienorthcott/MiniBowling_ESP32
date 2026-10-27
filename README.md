@@ -6,7 +6,7 @@ This is an ESP32 based codebase to support Danny Lum's amazing [mini bowling lan
 
 The code uses C++ classes to represent the physical layout of the machine through related objects. Timing is critical to this project, therefore the code uses a central timer sending out a regular **heartbeat** notificaiton to the pinsetter, at 30Hz. The pinsetter runs somewhat autonomously, only needing a call to the `doCycle()` function when a ball break is detected. Where there's a risk of something mechanically bad happening, I've tried to include some logic/state checks internally in the Pinsetter code. For example the sweep won't move if the deck is not in the SWEEP or UP state.
 
-Each Pinsetter component has its own `enum` values (see header files for detail) which tracks its current state, and exposes the public functions needed for its core operation only. Structurally the object hierarchy looks like this, only the Pinsetter and associated objects is actuall necessary for a usable machine. Everything else is upgrades!
+Each Pinsetter component has its own `enum` values (see header files for detail) which tracks its current state, and exposes the public functions needed for its core operation only. Structurally the object hierarchy looks like this, only the Pinsetter and associated objects is actually necessary for a usable machine. Everything else is upgrades!
 
 - Main
     - Pinsetter
@@ -29,19 +29,23 @@ Each Pinsetter component has its own `enum` values (see header files for detail)
 
 ### Public Pinsetter functions
 
-`begin()` call to initialise or reset at any time
+`void init()` call to initialise or reset at any time
 
-`heartbeat()` call at 30Hz from main loop
+`void heartbeat()` call at 30Hz from main loop
 
-`turretHomed()` notification from homing sensor interrupt handled in main loop, used on initialisation sequence
+`void turretHomed()` notification from homing sensor interrupt handled in main loop, used on initialisation sequence
 
-`pinSense()` notification from pin IR sensor interrupt handled in main loop
+`void pinSense()` notification from pin IR sensor interrupt handled in main loop
 
-`doCycle(true/false)` cycle the pinsetter. **true** adds a delay before the sweep lowers
+`void doCycle(true/false)` cycle the pinsetter. **true** adds a delay before the sweep lowers
 
- `startMotor()` wakes the motor from a stopped state. This can happen for example if there's a jam in the pinwheel, and the motor sleep timeout is exceeded (default is 30 seconds since last activation from ball throw / pin sense)   
+ `bool startMotor()` wakes the motor from a stopped state. This can happen for example if there's a jam in the pinwheel, and the motor sleep timeout is exceeded (default is 30 seconds since last activation from ball throw / pin sense)   
 
 `getStatus()` returns a struct of pinsetter status properties which can be used by the main loop
+
+`bool continuefromThrowOne(bool isStrike)` when using with scoring system, resume pinsetter operation after processing score from throw 1. Set `isStrike` to true to bypass the throw two cycle.
+
+`bool continuefromThrowTwo()`; when using with scoring system, resume pinsetter operation after processing score from throw 1
 
 ## Other Components
 
