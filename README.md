@@ -8,7 +8,7 @@ The code uses C++ classes to represent the physical layout of the machine throug
 
 Each Pinsetter component has its own `enum` values (see header files for detail) which tracks its current state, and exposes the public functions needed for its core operation only. Structurally the object hierarchy looks like this:
 
-- main.cpp
+- Main
     - Pinsetter
         - Deck
             - Slide
@@ -37,7 +37,7 @@ Each Pinsetter component has its own `enum` values (see header files for detail)
 
 ## Other Components
 
-The main section of the code `main.cpp` handles all the sensor, control panel button and timer interrupts, and acts as a gateway between the pinsetter, and other components, all of which are *optional*, and are handled in their own classes/objects. I2C addresses are configurable in `general_config.h`
+The main section of the code `Main.cpp` handles all the sensor, control panel button and timer interrupts, and acts as a gateway between the pinsetter, and other components, all of which are *optional*, and are handled in their own classes/objects. I2C addresses are configurable in `general_config.h`
 
 - **WS2811 Addressable lane LED lights** -  I'm handling this as two strips wired in parallel, so show the same.
 - **I2C 20x4 LCD display**
