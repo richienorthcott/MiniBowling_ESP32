@@ -1,7 +1,7 @@
 #include <Player.h>
 
 Player::Player(){            
-    this->init();
+    init();
 }
 
 void Player::init(){  
@@ -41,11 +41,11 @@ Player::ScoreType Player::setScore(uint8_t frame, bool throw1, uint8_t score){
 }
 
 Player::FrameScore Player::getScore(uint8_t frame){
-    Player::FrameScore ret;
-    ret.score = _throw[0][frame] + _throw[1][frame];
+    Player::FrameScore ret;        
+    ret.throw1Points = _throw[0][frame];
+    ret.throw2Points = _throw[1][frame];
+    ret.totalPoints = _throw[0][frame] + _throw[1][frame];
     ret.status = _type[frame];
-    ret.throw1 = _throw[0][frame];
-    ret.throw2 = _throw[1][frame];
     return ret;
 }
 

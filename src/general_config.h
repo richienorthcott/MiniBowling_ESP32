@@ -8,7 +8,7 @@
   #define DEBUG_LOG(source, action)
 #endif
 
-#define VERSION 1.23
+#define VERSION 1.24
 
 #define SERIAL_BAUD 115200
 #define TIMER_FREQEUCNCY 33333 // 1,000,000 /33333 = 30Hz

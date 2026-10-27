@@ -17,19 +17,19 @@ void LaneLighting::turnOn(){
 }
 
 void LaneLighting::solidRed(){
-    _currentMode = LIGHTINGMODE::NORMAL;
+    _currentMode = LIGHTINGMODE::STATIC;
     fill_solid(leds, LANE_PIXEL_COUNT, CRGB::Red);
     FastLED.show();
 }
 
 void LaneLighting::solidGreen(){
-    _currentMode = LIGHTINGMODE::NORMAL;
+    _currentMode = LIGHTINGMODE::STATIC;
     fill_solid(leds, LANE_PIXEL_COUNT, CRGB::Green);
     FastLED.show();
 }
 
 void LaneLighting::solidBlue(){
-    _currentMode = LIGHTINGMODE::NORMAL;
+    _currentMode = LIGHTINGMODE::STATIC;
     fill_solid(leds, LANE_PIXEL_COUNT, CRGB::Blue);
     FastLED.show();
 }
@@ -83,7 +83,7 @@ void LaneLighting::heartbeat(){
 
             if(chaseIndex < step ){
                 FastLED.setBrightness(LANE_PIXELS_INTENSITY1);
-                this->solidRed();
+                solidRed();
             } 
             break;
         case LIGHTINGMODE::CHASERAINBOW:
@@ -107,29 +107,25 @@ void LaneLighting::heartbeat(){
         case LIGHTINGMODE::STRIKE:
             if(chaseIndex ==0){
                 for(uint8_t i=0;i<LANE_PIXEL_COUNT;i++){
-                    if (random8() < 50){
-                        leds[i] = CRGB::White;
-                    }else{
-                        leds[i] = CRGB::Black;
-                    }
+                    random8() < 50 ? leds[i] = CRGB::White : leds[i] = CRGB::Black;                    
                 }  
                 FastLED.show();
             }
             chaseIndex += 1 ;
+            
             //show the effect every 2 frames
             if(chaseIndex==2)chaseIndex=0;
             timeout +=1;
             if(timeout == 120){
                 FastLED.setBrightness(LANE_PIXELS_INTENSITY1);
                 solidRed();
-            }
-            
+            }           
             break;
         }
 }
 
 void LaneLighting::clear(){
-    _currentMode = LIGHTINGMODE::NORMAL;
+    _currentMode = LIGHTINGMODE::STATIC;
     FastLED.clear();
     FastLED.show();
 }

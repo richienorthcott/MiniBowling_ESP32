@@ -24,14 +24,14 @@ void ControlPanel::mainMenu(){
     _lcd->clear();
     
     _lcd->setCursor(0, 0);_lcd->print("       speed:-.--m/s");
-    result = this->showSpeed(lastSpeed);//restore previous value
-    result = this->showMessage(lastMessage);
+    result = showSpeed(lastSpeed);//restore previous value
+    result = showMessage(lastMessage);
 
     _lcd->setCursor(0, 2);_lcd->print("seq:   load:? deck:?");    
-    result = this-showPinsetterStatus(lastStatus);
-    result = this->showSlot(lastLoad);
-    result = this->showDeck(lastDeck);
-    result = this->showMotor(lastMotor);
+    result = showPinsetterStatus(lastStatus);
+    result = showSlot(lastLoad);
+    result = showDeck(lastDeck);
+    result = showMotor(lastMotor);
     _lcd->setCursor(0, 3);_lcd->print("cycle | game | util ");   
 }
 
@@ -134,11 +134,7 @@ bool ControlPanel::showMotor(bool motor){
     lastMotor =  motor;
     if(currentPose != ControlPanelPage::MAIN) return false;
     _lcd->setCursor(0, 0);
-    if(motor){
-        _lcd->print("RUN  "); 
-    }else{
-         _lcd->print("PAUSE");
-    }
+    motor ? _lcd->print("RUN  ") : _lcd->print("PAUSE");    
     return true;
 }
 
@@ -146,11 +142,7 @@ bool ControlPanel::showDeck(bool loaded){
     lastDeck = loaded;
     if(currentPose != ControlPanelPage::MAIN) return false;
     _lcd->setCursor(19, 2);
-    if(lastDeck){
-        _lcd->print("F");
-    }else{
-        _lcd->print("E");
-    }
+    lastDeck ? _lcd->print("F"): _lcd->print("E");
     return true;
 }
 
@@ -158,11 +150,7 @@ bool ControlPanel::showSpeed(float speed){
     lastSpeed = speed;
     if(currentPose != ControlPanelPage::MAIN) return false;
     _lcd->setCursor(13, 0);
-    if(lastSpeed > 0){
-        _lcd->print(lastSpeed);
-    }else{
-        _lcd->print("-.--");  
-    }
+    lastSpeed > 0 ? _lcd->print(lastSpeed) : _lcd->print("-.--");      
     return true;
 }
 
@@ -189,7 +177,7 @@ bool ControlPanel::updateFrameCount(){
 bool ControlPanel::initGame(){
     if(currentPose != ControlPanelPage::SETUP) return false;
     _game.init();
-    this->gameMenu();
+    gameMenu();
     return true;
 }
 

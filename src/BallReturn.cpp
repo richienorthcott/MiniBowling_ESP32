@@ -19,13 +19,14 @@ void BallReturn::closeDoor(){
 }
 
 void BallReturn::armDoor(){
-    if(currentPose == BallReturnPose::OPEN) this->closeDoor();
+    if(currentPose == BallReturnPose::OPEN) closeDoor();
     pulseCount = 0;
     isArmed = true;
 }
 
 void BallReturn::heartbeat(){    
     if(isArmed){
+        
         if(pulseCount == BALL_DOOR_DELAY_PULSES){
             openDoor();
         }else if(pulseCount == BALL_DOOR_CLOSE_PULSES){            

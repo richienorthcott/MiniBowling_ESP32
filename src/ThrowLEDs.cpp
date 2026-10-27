@@ -5,7 +5,7 @@ ThrowLEDs::ThrowLEDs(Adafruit_PWMServoDriver* servos){
 }
 
 void ThrowLEDs::begin(){
-    this->clear();
+    clear();
 }
 
 void ThrowLEDs::throwOne(){

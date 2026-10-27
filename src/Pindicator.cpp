@@ -7,11 +7,11 @@ Pindicator::Pindicator(HT16K33* driver){
 void Pindicator::begin(){
     matrixDriver->begin(PINDICATOR_ADDRESS);
     matrixDriver->setBrightness(PINDICATOR_INTENSITY);
-    this->showAll();
+    showAll();
 }
 
 void Pindicator::showAll(){;
-  this->showPinStatus(65535);//tutrn on all pin LEDs
+  showPinStatus(65535);//tutrn on all pin LEDs
 }
 
 void Pindicator::showPinStatus(uint16_t pinStatus){
@@ -30,11 +30,7 @@ void Pindicator::showPinStatus(uint16_t pinStatus){
 };
 
 void Pindicator::updateLED(uint8_t LEDnumber, uint16_t sensorID, uint16_t sensorValue){
-    if((sensorValue & sensorID) == sensorID){
-        matrixDriver->setLed(LEDnumber);
-    }else{
-        matrixDriver->clearLed(LEDnumber);
-    }
+    (sensorValue & sensorID) == sensorID ? matrixDriver->setLed(LEDnumber) : matrixDriver->clearLed(LEDnumber);    
 }
 
 void Pindicator::clear(){

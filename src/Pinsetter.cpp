@@ -129,7 +129,7 @@ void Pinsetter::heartbeat(){
                //drop the new set of pins onto the deck (move the slide to the DUMP position)
                delaySteps += 1;
                if(delaySteps == DECK_DOWN_TO_UP){
-                    _deck.slide.setPosition(Slide::SlidePose::DUMP);
+                    _deck.slide.dumpPins();
                     _turret.deckHasPins = false;
                     currentPose = PinsetterPose::PINSDROPPED;
                     delaySteps = 0;
@@ -164,7 +164,7 @@ void Pinsetter::heartbeat(){
                delaySteps += 1;
                if(delaySteps == DECK_MID_RISE){
                     delaySteps = 0;
-                    _deck.slide.setPosition(Slide::SlidePose::RECEIVE);
+                    _deck.slide.receivePins();
                     _mainMotor.paused = false;
                     switch(currentMode){
                          case PinsetterMode::INITIALISING1:

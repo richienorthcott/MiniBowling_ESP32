@@ -13,12 +13,13 @@ class Player{
             EXTRAOPEN       //extra frame, but not all pins knocked down. 2nd throw can be aborted.
         };
                 
-        struct FrameScore{  //struct used for scoreboard
-            uint8_t score;
+        struct FrameScore{  //struct used for scoreboard                                    
+            uint8_t throw1Points;
+            uint8_t throw2Points;
+            uint8_t totalPoints;
             ScoreType status;
-            uint8_t throw1;
-            uint8_t throw2;
         };
+
         void init();                                                            //reset the player for a new game
         void resetFrame(uint8_t frame);                                         //resets a specific frame                                 
         Player::ScoreType setScore(uint8_t frame, bool throw1, uint8_t score);  //set points by frame and throw1/throw2 status 

@@ -1,17 +1,16 @@
 #include <Globals.h>
+//3rd party includes
 #include <Adafruit_PWMServoDriver.h>
 #include <FastAccelStepper.h>
 #include <LiquidCrystal_I2C.h>
 #include <ht16k33.h>
-#include <LaneLighting.h>
 #include <FastLED.h>
 #include <PCF8575.h>
-
+//project includes
 #include <Pinsetter.h>
+#include <LaneLighting.h>
 #include <ControlPanel.h>
 #include <Scoring.h>
-
-hw_timer_t *heartbeat = NULL;
 
 PCF8575 pinSensors(PCF8575_ADDRESS);
 Adafruit_PWMServoDriver servos(PCA9685_ADDRESS);
@@ -25,19 +24,18 @@ LaneLighting laneLighting(lane_leds);
 ControlPanel controlPanel(&lcd);
 Scoring scoring(&pinSensors, &ledmatrixdriver);
 
-Pinsetter::PinsetterPose machineState = Pinsetter::PinsetterPose::INIT;
-
+hw_timer_t *heartbeat = NULL;
 volatile bool flag_updateHeartbeat, flag_btn_home, flag_btn_reset, flag_btn_select1, flag_btn_select2, flag_btn_select3, flag_ballSense, flag_ballSpeed, flag_pinSense, flag_homeSense, flag_maintenance_on, flag_maintenance_off = false;
 volatile unsigned long lastHome, lastReset, lastSelect1, lastSelect2, lastSelect3, lastBallSense, lastBallSpeed, lastPinSense, lastHomeSense = 0;
 volatile bool toggleReset = false;
 
-//these vars are passed to the LCD display
+//State management, used in main loop
+Pinsetter::PinsetterPose machineState = Pinsetter::PinsetterPose::INIT;
 uint8_t currentTurretSlot = 0;
 bool deckIsLoaded = false;
 bool motorRunning = false;
-//ControlPanel::ControlPanelPage currentPage = ControlPanel::ControlPanelPage::INIT;
 
-bool one = true;
+bool one = true;//this can be deleted when no longer needed
 
 void ARDUINO_ISR_ATTR onTimer() {
     flag_updateHeartbeat = true;
@@ -340,15 +338,13 @@ void setup() {
     engine.init();
 
     servos.begin();
-    servos.setPWMFreq(SERVO_PWM_FREQUENCY);
-    delay(10);
+    servos.setPWMFreq(SERVO_PWM_FREQUENCY);    
     
     scoring.begin();
     delay(3000);
     
     pinsetter.begin(&engine);
     resetPinsetter();
-    //controlPanel.mainMenu(); 
 }
 
 void loop() {       

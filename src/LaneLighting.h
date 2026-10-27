@@ -12,7 +12,7 @@ class LaneLighting{
         void clear();
 
         enum LIGHTINGMODE{            
-            NORMAL,
+            STATIC,
             CHASEWHITE,
             CHASEGREEN,
             CHASERAINBOW,
@@ -34,7 +34,7 @@ class LaneLighting{
 
     private:                
         CRGB* leds;
-        LIGHTINGMODE _currentMode = LIGHTINGMODE::NORMAL;
+        LIGHTINGMODE _currentMode = LIGHTINGMODE::STATIC;
         uint8_t chaseIndex = 0;
         uint8_t timeout= 0;        
     };

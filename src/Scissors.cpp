@@ -5,7 +5,7 @@ Scissors::Scissors(Adafruit_PWMServoDriver* servos){
 }
 
 void Scissors::begin(){
-    this->release();
+    release();
 }
 
 void Scissors::release(){

@@ -26,7 +26,7 @@ void Game::printScore(){
        _lcd->print(currentFrame + 1);           //print current frame number
        _lcd->print("/");           
         if(numFrames < 9) _lcd->print(0);       //add leading zero if frame <10
-        _lcd->print(this->numFrames + 1);       //print total frames
+        _lcd->print(numFrames + 1);       //print total frames
     }
 
     if(numPlayers < 2){
@@ -37,9 +37,11 @@ void Game::printScore(){
     if(currentFrame ==0){
         if(currentPlayer ==0){
             if(players[0].getScore(currentFrame).status == Player::ScoreType::NEW){
-                _lcd->setCursor(7, 3);_lcd->print("      ");
+                _lcd->setCursor(7, 3);
+                _lcd->print("      ");
             }else{
-                _lcd->setCursor(7, 3);_lcd->print("replay");
+                _lcd->setCursor(7, 3);
+                _lcd->print("replay");
             }
         }
     }
@@ -93,14 +95,10 @@ void Game::printFrame(uint8_t player, uint8_t frame){
     //prints a single character representing the frame outcome
     switch(players[player].getScore(frame).status){
          case Player::ScoreType::NEW:
-            if(currentPlayer == player && currentFrame == frame){
-                _lcd->print("_");                    
-            }else{
-                _lcd->print("-");                    
-            }
+            currentPlayer == player && currentFrame == frame ? _lcd->print("_") : _lcd->print("-");                                            
             break;
         case Player::ScoreType::OPEN:
-            _lcd->print(players[player].getScore(frame).score);                
+            _lcd->print(players[player].getScore(frame).totalPoints);                
             break;
         case Player::ScoreType::SPARE:
             _lcd->print("/");                
@@ -199,7 +197,7 @@ Player::ScoreType Game::submitToGame(bool isThrowOne, uint8_t score){
                 currentFrame += 1;            
                 currentPlayer = 0;                        
                 displayPlayer = 0;
-                if(currentFrame > numFrames) this->currentPose = Game::GamePose::GAMEOVER;              
+                if(currentFrame > numFrames) currentPose = Game::GamePose::GAMEOVER;              
             }
         }
     }    
