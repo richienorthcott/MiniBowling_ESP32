@@ -311,19 +311,6 @@ void handleInterruptFlags(){
             
             case ControlPanel::ControlPanelPage::GAME:                                        
                 Player::ScoreType result;
-                /*
-                if(one){
-                    result = controlPanel.submitPins(random(11), true);                        
-                    if (result == Player::ScoreType::EXTRAOPEN  || result == Player::ScoreType::STRIKE){
-                        one = true;
-                    }else{
-                        one = false;
-                    }
-                }else{
-                    result = controlPanel.submitPins(random(6), false);
-                    one = true;
-                }
-                */
                 controlPanel.resetFrame();         
                 break;
             
@@ -339,15 +326,19 @@ void handleInterruptFlags(){
             case ControlPanel::ControlPanelPage::MAIN:
                 controlPanel.utilMenu();
                 break;
+
             case ControlPanel::ControlPanelPage::UTIL:
                 resetPinsetter();
                 break;
+
             case ControlPanel::ControlPanelPage::LIGHT:                
                 laneLighting.wipeGreen();    
                 break;
+
             case ControlPanel::ControlPanelPage::GAME:                
                 controlPanel.setupMenu();
                 break;
+
             case ControlPanel::ControlPanelPage::SETUP:                
                 controlPanel.initGame();//start a new game
                 break;
@@ -373,8 +364,6 @@ void handleInterruptFlags(){
             //calcualate the speed. Sensors are 8.5cm apart
             float speed = 85/float(lastBallSpeed - lastBallSense);
             controlPanel.showSpeed(speed);
-        }else{
-            //this is probably the sweep blocking the speed sensor
         }
         flag_ballSpeed = false;
     }
