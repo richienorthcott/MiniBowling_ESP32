@@ -35,8 +35,6 @@ uint8_t currentTurretSlot = 0;
 bool deckIsLoaded = false;
 bool motorRunning = false;
 
-bool one = true;//this can be deleted when no longer needed
-
 void ARDUINO_ISR_ATTR onTimer() {
     flag_updateHeartbeat = true;
 }
@@ -177,7 +175,7 @@ void resetPinsetter(){
     laneLighting.lavaAnim();
 }
 
-void handleFlags(){
+void handleInterruptFlags(){
    //these flags are set by button interrupts, or main timer loop interrupt. 
     if(flag_updateHeartbeat){
         pinsetter.heartbeat();
@@ -273,8 +271,7 @@ void handleFlags(){
                 controlPanel.setupMenu();
                 break;
             case ControlPanel::ControlPanelPage::SETUP:                
-                controlPanel.initGame();//start a new game                ;    
-                one = true;
+                controlPanel.initGame();//start a new game
                 break;
             }
         flag_btn_select3 = false;
@@ -348,7 +345,7 @@ void setup() {
 }
 
 void loop() {       
-    handleFlags();
+    handleInterruptFlags();
     Pinsetter::pinsetterStatus machineStatus = pinsetter.getStatus();
     bool result;//control panel functions return true/false which show if the screen was actually updated. Will depend on current control panel screen/mode
 
