@@ -1,7 +1,5 @@
 #include <Game.h>
 
-Game::Game(){}
-
 Game::Game(LiquidCrystal_I2C* lcd){
     _lcd = lcd;
 }
@@ -204,7 +202,7 @@ Player::ScoreType Game::submitToGame(bool isThrowOne, uint8_t score){
     return ret;
 }
 
-bool Game::resetFrame(){    
+bool Game::replayFrame(){    
     if (currentPose != Game::GamePose::RUNNING) return false;
 
     //remove the current frame, if in progress

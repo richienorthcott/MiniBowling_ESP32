@@ -186,9 +186,9 @@ bool ControlPanel::scrollGame(){
     return _game.scroll();    
 }
 
-bool ControlPanel::resetFrame(){
+bool ControlPanel::replayFrame(){
     if(currentPose != ControlPanelPage::GAME) return false;
-    return _game.resetFrame();    
+    return _game.replayFrame();    
 }
 
 Player::ScoreType ControlPanel::submitPins(uint8_t score, bool isThrowOne){

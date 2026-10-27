@@ -311,7 +311,7 @@ void handleInterruptFlags(){
             
             case ControlPanel::ControlPanelPage::GAME:                                        
                 Player::ScoreType result;
-                controlPanel.resetFrame();         
+                controlPanel.replayFrame();         
                 break;
             
             case ControlPanel::ControlPanelPage::SETUP:                

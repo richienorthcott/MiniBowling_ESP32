@@ -13,20 +13,18 @@ class Game{
     
         GamePose currentPose = GamePose::INIT;
             
-        Game(LiquidCrystal_I2C* lcd);                 
-        Game();                                         //initialise without LCD, for testing
+        Game(LiquidCrystal_I2C* lcd);                         
         void init();                                    //initialises a new game for up to 8 players
         
         void changePlayerCount();                       //increments the palyer count
         void changePlayerCount(uint8_t totalPlayers);   //set the number of players
         
         void changeFrameCount();                        //increments the frame count
-        void changeFrameCount(uint8_t totalFrames);     //set the number of frwames
-        
-        //void debugScore();                              //print to Serial
-        void printScore();                              //print to LCD
-        bool scroll();                                  //scroll through players on LCD
-        bool resetFrame();
+        void changeFrameCount(uint8_t totalFrames);     //set the number of frames
+                
+        void printScore();                              //update lastest score to LCD
+        bool scroll();                                  //scroll through players on LCD if more than 2
+        bool replayFrame();                             //deletes the last played frame
 
         Player::ScoreType submitScore(bool isThrowOne, uint8_t score);        
 

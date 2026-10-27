@@ -34,18 +34,20 @@ class ControlPanel{
         bool showDeck(bool loaded);                                   //prints whether the deck is full or empty. Returns false if not in MAIN mode
         bool showMotor(bool motor);                                   //prints the state of the main motor. Returns false if not in MAIN mode
         
-        void notConnected();    //menu display mode
-        void mainMenu();        //menu display mode
-        void gameMenu();        //menu display mode
-        void setupMenu();       //menu display mode
-        void utilMenu();        //menu display mode
-        void lightMenu();       //menu display mode
+        //these initiate the different LCD menu modes
+        void notConnected();    
+        void mainMenu();       
+        void gameMenu();       
+        void setupMenu();      
+        void utilMenu();       
+        void lightMenu();      
 
-        bool updatePlayerCount();       //relay to game object. Retrurns false if not in game setup mode.
-        bool updateFrameCount();        //relay to game object. Retrurns false if not in game setup mode.
-        bool initGame();                //relay to game object. Retrurns false if not in game setup mode.
-        bool scrollGame();              //relay to game object. Retrurns false if not in game mode.
-        bool resetFrame();              //relay to game object. Retrurns false if not in game mode.
+        //these functions are relayed to the Game object. By having this as a child object of the control panel, we can easily check if we're on the right display mode.
+        bool updatePlayerCount();       //relay to Game object. Retrurns false if not in game setup mode.
+        bool updateFrameCount();        //relay to Game object. Retrurns false if not in game setup mode.
+        bool initGame();                //relay to Game object. Retrurns false if not in game setup mode.
+        bool scrollGame();              //relay to Game object. Retrurns false if not in game mode.
+        bool replayFrame();              //relay to Game object. Retrurns false if not in game mode.
         Player::ScoreType submitPins(uint8_t score, bool isThrowOne);                
     private:        
         LiquidCrystal_I2C* _lcd;                                                
