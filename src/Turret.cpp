@@ -6,6 +6,11 @@ void Turret::begin(FastAccelStepperEngine* engine){
     _engine = engine;    
     _stepper = engine->stepperConnectToPin(STEP_PIN);
     _stepper->setDirectionPin(DIR_PIN);
+
+
+    _stepper->setSpeedInHz(TURRET_SPEED_RUN);
+    _stepper->setAcceleration(TURRET_ACCEL_RUN);
+
 }
 
 void Turret::init(){

@@ -8,14 +8,15 @@ PCF8575 interface(PCF8575_ADDRESS);
 PinSensor mySensor(&interface);
 HT16K33 leds;
 Pindicator myPindicator(&leds);
+Deck myDeck()
 
 void setup(){        
-    Serial.begin(115200);
-    Wire.begin();
-    mySensor.begin();;
-    myPindicator.begin();
+    //Serial.begin(115200);
+    //Wire.begin();
+    //mySensor.begin();;
+    //myPindicator.begin();
 }
 
 void loop(){
-    myPindicator.showPinStatus(mySensor.getStatus().pins);
+    //myPindicator.showPinStatus(mySensor.getStatus().pins);
 }
