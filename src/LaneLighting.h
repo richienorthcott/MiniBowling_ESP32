@@ -24,6 +24,7 @@ class LaneLighting{
         void solidRed();  
         void solidGreen();  
         void solidBlue();
+        void solidWhite();
         
         //animations. These all need the heartbeat function to advance.
         void comet();

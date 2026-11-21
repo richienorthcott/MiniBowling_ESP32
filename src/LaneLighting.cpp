@@ -16,6 +16,12 @@ void LaneLighting::turnOn(){
     FastLED.show();
 }
 
+void LaneLighting::solidWhite(){
+    _currentMode = LIGHTINGMODE::STATIC;
+    fill_solid(leds, LANE_PIXEL_COUNT, CRGB::White);
+    FastLED.show();
+}
+
 void LaneLighting::solidRed(){
     _currentMode = LIGHTINGMODE::STATIC;
     fill_solid(leds, LANE_PIXEL_COUNT, CRGB::Red);
