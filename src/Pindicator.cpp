@@ -7,7 +7,7 @@ Pindicator::Pindicator(HT16K33* driver){
 void Pindicator::begin(){
     matrixDriver->begin(PINDICATOR_ADDRESS);
     matrixDriver->setBrightness(PINDICATOR_INTENSITY);
-    showAll();
+    showPinStatus(0);
 }
 
 void Pindicator::showAll(){;

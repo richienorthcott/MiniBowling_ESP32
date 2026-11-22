@@ -65,15 +65,18 @@ void loop() {
 
         switch(machineState){            
             case Pinsetter::PinsetterPose::SWEEPUP:                
-                //show current pin status on pindicator
-                //score will normally be 10. Don't do anything with it here.
-                score = scoring.randomPins();       
+                score = scoring.displayPins(true);       
                 break;                        
             
             case Pinsetter::PinsetterPose::READPINSDROPPED:
                 //called after throw 1    
-                score = scoring.randomPins();
-        
+                
+                score = scoring.displayPins(true);
+                
+                Serial.println("get score 1");
+                Serial.println(score);
+
+
                 frameResult = controlPanel.submitPins(score, true);
                 result = pinsetter.continuefromThrowOne(frameResult == Player::ScoreType::STRIKE);
                 if(frameResult == Player::ScoreType::STRIKE) laneLighting.strike();           
@@ -81,7 +84,12 @@ void loop() {
             
             case Pinsetter::PinsetterPose::READTHROWTWO:
                 //called after throw 2
-                score = scoring.randomPins();
+                score = scoring.displayPins(false);
+                
+                Serial.println("get score 2");
+                Serial.println(score);
+
+                
                 result = controlPanel.submitPins(score, false);
                 result = pinsetter.continuefromThrowTwo();
                 break;
