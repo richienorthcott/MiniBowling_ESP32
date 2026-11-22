@@ -9,8 +9,7 @@ class Pindicator{
         
         void showPinStatus(uint16_t pinStatus);
         void showAll();
-        void clear();
-        uint8_t randomPins();        
+        void clear();  
     private:        
         HT16K33* matrixDriver;
         void updateLED(uint8_t LEDnumber, uint16_t sensorID, uint16_t sensorValue);

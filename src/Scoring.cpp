@@ -18,10 +18,6 @@ uint8_t Scoring::displayPins(bool isThrowOne){
     }
 }
 
-uint8_t Scoring::randomPins(){
-    return pindicator.randomPins();
-}
-
 void Scoring::clearPins(){
     pindicator.clear();
 }
