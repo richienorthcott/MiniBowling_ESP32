@@ -59,7 +59,7 @@ void ControlPanel::gameMenu(){
         default:            
             _lcd->setCursor(9, 0);_lcd->print("frame:");
             _lcd->setCursor(0, 3);_lcd->print("scroll|replay| setup");    
-            _game.printScore();            
+            _game.updateScore();            
             break;
         }
 } 
@@ -194,6 +194,6 @@ bool ControlPanel::replayFrame(){
 Player::ScoreType ControlPanel::submitPins(uint8_t score, bool isThrowOne){
     Player::ScoreType ret;
     ret = _game.submitScore(isThrowOne, score);            
-    if(currentPose == ControlPanel::ControlPanelPage::GAME) _game.printScore();
+    if(currentPose == ControlPanel::ControlPanelPage::GAME) _game.updateScore();
     return ret;    
 }

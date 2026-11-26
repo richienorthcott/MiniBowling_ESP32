@@ -1,8 +1,6 @@
 #pragma once
-#include <Globals.h>
 #include <Pindicator.h>
 #include <PinSensor.h>
-
 
 class Scoring{
     public:

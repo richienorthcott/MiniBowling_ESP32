@@ -12,6 +12,7 @@ void Deck::begin(){
 
 void Deck::setPosition(enum DeckPose pos){
     currentPose = pos;
+    
     switch(pos){
         case DeckPose::UP:            
             _servoInterface->setPWM(RAISE_LEFT_CHANNEL, 0, DECK_LEFT_PULSEWIDTH_UP);

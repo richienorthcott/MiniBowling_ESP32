@@ -22,14 +22,18 @@ class Game{
         void changeFrameCount();                        //increments the frame count
         void changeFrameCount(uint8_t totalFrames);     //set the number of frames
                 
-        void printScore();                              //update lastest score to LCD
+        void updateScore();                             //update lastest score to LCD
         bool scroll();                                  //scroll through players on LCD if more than 2
         bool replayFrame();                             //deletes the last played frame
+        
+        bool sendToPrinter();                           //sends scoresheet to printer
 
         Player::ScoreType submitScore(bool isThrowOne, uint8_t score);        
 
         uint8_t numPlayers = 0;                         //this is zero indexed, so 0 means 1
         uint8_t numFrames = 9;                          //this is zero indexed, so 0 means 1                
+    
+    
     private:
         Player players[8];                                              //allow up to 8 players
         void printPlayer(uint8_t player, bool active, uint8_t row);     //prints 20 char summary of player status                                    

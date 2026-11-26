@@ -13,7 +13,7 @@ void Game::init(){
     for (uint8_t j=0; j < 8; j++) players[j].init();            
 }
 
-void Game::printScore(){    
+void Game::updateScore(){    
     //print the frame information
     if(currentPose == Game::GamePose::GAMEOVER){
         _lcd->setCursor(8, 0);_lcd->print("OVER           ");
@@ -208,7 +208,7 @@ bool Game::replayFrame(){
     //remove the current frame, if in progress
     if (players[currentPlayer].getScore(currentFrame).status != Player::ScoreType::NEW){
         players[currentPlayer].resetFrame(currentFrame);
-        printScore();
+        updateScore();
         return true;
     }
     
@@ -217,7 +217,7 @@ bool Game::replayFrame(){
         currentPlayer -= 1;
         displayPlayer = currentPlayer;
         players[currentPlayer].resetFrame(currentFrame);
-        printScore();
+        updateScore();
         return true;
     }else{
         if (currentFrame>0){
@@ -225,9 +225,40 @@ bool Game::replayFrame(){
             currentPlayer = numPlayers;
             displayPlayer = currentPlayer;
             players[currentPlayer].resetFrame(currentFrame);
-            printScore();
+            updateScore();
             return true;
         }   
     }    
     return false;//nothing to clear
+}
+
+bool Game::sendToPrinter(){
+
+    Serial.println("================================================================================");
+    Serial.println("LANE 12                     STRIKE ZONE BOWLING ALLEY          DATE: 25-NOV-2026");
+    Serial.println("GAME 01                                                        TIME: 21:30");
+    Serial.println("================================================================================");
+    Serial.println("PLAYER NAME         | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 10   | TOTAL|");
+    Serial.println("--------------------+----+----+----+----+----+----+----+----+----+------+------+");
+    Serial.println("1. ALEX             | X  | 7 /| 9 -| X  | X  | X  | 8 1| 7 /| 9 /| X X X|      |");
+    Serial.println();
+    Serial.println("                    |  20|  39|  48|  78| 106| 125| 134| 153| 173|   203|   203|");
+    Serial.println("--------------------+----+----+----+----+----+----+----+----+----+------+------+");
+    Serial.println("2. SAM              | 8 1| 9 /| X  | 7 2| 8 /| 9 -| X  | X  | 8 /| 9 / X|      |");
+    Serial.println();
+    Serial.println("                    |   9|  29|  48|  57|  76|  85| 113| 133| 152|   172|   172|");
+    Serial.println("--------------------+----+----+----+----+----+----+----+----+----+------+------+");
+    Serial.println("3. JORDAN           | 6 2| 7 1| 8 1| 9 /| 7 2| 6 3| 8 /| 9 -| 7 1| 8 1  |      |");
+    Serial.println();
+    Serial.println("                    |   8|  16|  25|  42|  51|  60|  79|  88|  96|   105|   105|");
+    Serial.println("--------------------+----+----+----+----+----+----+----+----+----+------+------+");
+    Serial.println("4. CASEY            | X  | X  | 9 /| X  | 8 /| X  | X  | 9 -| X  | X 9 /|      |");
+    Serial.println();
+    Serial.println("                    |  29|  49|  69|  89| 109| 138| 157| 166| 195|   215|   215|");
+    Serial.println();    
+    Serial.println("================================================================================");
+    Serial.println("TEAM SCRATCH TOTAL                                                      |   695|");
+    Serial.println("================================================================================");
+    
+    return false;
 }

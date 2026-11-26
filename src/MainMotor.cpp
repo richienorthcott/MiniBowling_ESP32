@@ -29,6 +29,7 @@ void MainMotor::start(){
 
 void MainMotor::start(uint8_t percentSpeed){
     int pulseWidth = float(100-percentSpeed) * 40.95;
+    currentPose = MainMotorPose::RUNNING;
     _servoInterface->setPWM(CONVEYOR_CHANNEL, 0, pulseWidth);
     paused = false;
 };

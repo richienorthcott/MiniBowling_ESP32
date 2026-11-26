@@ -373,7 +373,7 @@ bool Pinsetter::continuefromThrowTwo(){
 bool Pinsetter::startMotor(){
      //relays motor start request to the motor child object
      //don't start motor if initialising
-     if (currentMode == Pinsetter::PinsetterMode::THROW_ONE ||currentMode == Pinsetter::PinsetterMode::THROW_TWO){
+     if (currentMode == Pinsetter::PinsetterMode::THROW_ONE || currentMode == Pinsetter::PinsetterMode::THROW_TWO){
           _mainMotor.start();
           return true;
      }

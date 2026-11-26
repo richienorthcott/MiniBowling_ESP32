@@ -63,8 +63,10 @@ void loop() {
         uint8_t score;
         Player::ScoreType frameResult; 
 
-        switch(machineState){            
-            case Pinsetter::PinsetterPose::SWEEPUP:                
+        switch(machineState){                                    
+            case Pinsetter::PinsetterPose::SWEEPUP:
+            case Pinsetter::PinsetterPose::SWEEPUPTOGUARD:                
+                //update the pindicator LEDs
                 score = scoring.displayPins(true);       
                 break;                        
             
@@ -72,11 +74,6 @@ void loop() {
                 //called after throw 1    
                 
                 score = scoring.displayPins(true);
-                
-                Serial.println("get score 1");
-                Serial.println(score);
-
-
                 frameResult = controlPanel.submitPins(score, true);
                 result = pinsetter.continuefromThrowOne(frameResult == Player::ScoreType::STRIKE);
                 if(frameResult == Player::ScoreType::STRIKE) laneLighting.strike();           
@@ -84,12 +81,7 @@ void loop() {
             
             case Pinsetter::PinsetterPose::READTHROWTWO:
                 //called after throw 2
-                score = scoring.displayPins(false);
-                
-                Serial.println("get score 2");
-                Serial.println(score);
-
-                
+                score = scoring.displayPins(false); 
                 result = controlPanel.submitPins(score, false);
                 result = pinsetter.continuefromThrowTwo();
                 break;
@@ -361,8 +353,8 @@ void handleInterruptFlags(){
 
     if(flag_ballSense){
         if(pinsetter.doCycle(true)){
-            laneLighting.comet();
-            scoring.clearPins();
+            laneLighting.comet();            
+            //scoring.clearPins();
         }
         flag_ballSense = false;
     }
